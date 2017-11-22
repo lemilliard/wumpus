@@ -9,5 +9,7 @@ public class Main {
 
         List<Node> nodes = Node.getExistingNodes();
 
+        System.out.println(nodes);
+
     }
 }

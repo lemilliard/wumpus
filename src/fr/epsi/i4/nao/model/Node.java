@@ -39,6 +39,15 @@ public class Node {
         return neighbors;
     }
 
+    @Override
+    public String toString() {
+        return "Node{" +
+                "value=" + value +
+                ", coordinate=" + coordinate +
+                ", neighbors=" + neighbors.size() +
+                "}\n";
+    }
+
     public static Node generateGraph(int width, int height) {
         Node graph = new Node(0, 0);
 
