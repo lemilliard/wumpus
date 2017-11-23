@@ -1,4 +1,4 @@
-package fr.epsi.i4.nao.model;
+package fr.epsi.i4.nao.model.old;
 
 import java.util.ArrayList;
 import java.util.List;
