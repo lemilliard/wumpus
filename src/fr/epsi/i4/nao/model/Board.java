@@ -18,17 +18,18 @@ public class Board {
             }
         }
 
-        cases[0][0].setContent("P", 0);
+        cases[0][0].addContent("P");
+        cases[4][3].addContent("O");
     }
 
     @Override
     public String toString() {
         String str = "";
 
-        for (int i = 0; i < cases.length; i++) {
+        for (int y = cases.length - 1; y > -1; y--) {
             str += "\n------------------------\n";
-            for (int j = 0; j < cases[i].length; j++) {
-                str += "|" + cases[i][j].getContentAsString() + "|";
+            for (int x = 0; x < cases[y].length; x++) {
+                str += "|" + cases[y][x].getContentAsString() + "|";
             }
         }
 

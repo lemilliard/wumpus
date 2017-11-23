@@ -70,7 +70,7 @@ public class Case {
         boolean added = false;
         int i = 0;
         while (i < this.content.length && !added) {
-            if (this.content[i] == null) {
+            if (this.content[i] == null || this.content[i].equals("_")) {
                 this.content[i] = content;
                 added = true;
             }
