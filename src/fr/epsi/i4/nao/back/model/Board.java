@@ -3,7 +3,7 @@ package fr.epsi.i4.nao.back.model;
 /**
  * Created by tkint on 23/11/2017.
  */
-public class Board {
+public class Board implements IBoard {
 
     private Case[][] cases;
 
@@ -34,7 +34,38 @@ public class Board {
         return str;
     }
 
-    public void movePlayer(int direction) {
+    @Override
+    public void generate(int width, int height) {
+
+    }
+
+    @Override
+    public void addPuits(double percentage) {
+
+    }
+
+    @Override
+    public void addAgent() {
+
+    }
+
+    @Override
+    public void addWumpus() {
+
+    }
+
+    @Override
+    public void addGold() {
+
+    }
+
+    @Override
+    public void addWinds() {
+
+    }
+
+    @Override
+    public void addSmell() {
 
     }
 }
