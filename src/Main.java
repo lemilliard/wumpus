@@ -1,5 +1,5 @@
-import fr.epsi.i4.nao.model.Board;
-import fr.epsi.i4.nao.model.old.Node;
+import fr.epsi.i4.nao.back.model.Board;
+import fr.epsi.i4.nao.back.model.old.Node;
 
 import java.util.List;
 
