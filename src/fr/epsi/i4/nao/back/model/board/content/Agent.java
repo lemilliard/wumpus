@@ -3,22 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fr.epsi.i4.nao.unit;
+package fr.epsi.i4.nao.back.model.board.content;
 
 /**
  *
  * @author cesar
  */
-public class Agent {
+public class Agent extends Content {
     private static Integer turn;
     private Integer arrow;
     private Coordinate position;
-    private Integer direction; //modulo
+    /**
+     * Voir le README
+     */
+    private Integer direction;
     
     public Agent(){
         this.arrow = 1;
         this.position = new Coordinate(0,0);
-        this.direction = direction;
+        this.direction = 2;
     }
 
     public static Integer getTurn() {

@@ -1,4 +1,4 @@
-package fr.epsi.i4.nao.back.model;
+package fr.epsi.i4.nao.back.model.board;
 
 /**
  * Created by tkint on 14/12/2017.

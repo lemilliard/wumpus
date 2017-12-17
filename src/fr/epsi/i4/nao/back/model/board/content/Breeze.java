@@ -3,15 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fr.epsi.i4.nao.unit;
+package fr.epsi.i4.nao.back.model.board.content;
 
 /**
  *
  * @author cesar
  */
-public class Wumpus extends Content {
-    
-    public Wumpus(Integer weight){
+public class Breeze extends Content {
+
+    public Breeze(Integer weight) {
         super(weight);
+        this.weight = 2;
     }
 }

@@ -1,23 +1,20 @@
-package fr.epsi.i4.nao.back.model;
+package fr.epsi.i4.nao.back.model.board;
+
+import fr.epsi.i4.nao.back.model.board.content.Agent;
 
 /**
  * Created by tkint on 23/11/2017.
  */
 public class Board implements IBoard {
 
+    private int width;
+    private int height;
     private Case[][] cases;
 
     public Board(int width, int height) {
-        cases = new Case[height][width];
-        for (int y = 0; y < height; y++) {
-            cases[y] = new Case[width];
-            for (int x = 0; x < width; x++) {
-                cases[y][x] = new Case();
-            }
-        }
-
-        cases[0][0].addContent("P");
-        cases[4][3].addContent("O");
+        this.width = width;
+        this.height = height;
+        generate(width, height);
     }
 
     @Override
@@ -36,17 +33,27 @@ public class Board implements IBoard {
 
     @Override
     public void generate(int width, int height) {
-
+        cases = new Case[height][width];
+        for (int y = 0; y < height; y++) {
+            cases[y] = new Case[width];
+            for (int x = 0; x < width; x++) {
+                cases[y][x] = new Case();
+            }
+        }
+        addPuits(0.5d);
     }
 
     @Override
     public void addPuits(double percentage) {
+        int count = (int) (percentage * ((double) width * height));
+        for (int i = 0; i < count; i++) {
 
+        }
     }
 
     @Override
     public void addAgent() {
-
+        cases[0][0].addContent(new Agent());
     }
 
     @Override

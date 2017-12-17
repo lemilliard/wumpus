@@ -9,7 +9,14 @@
   * Présence d'un Wumpus
   * Présence de puits
   * Présence d'un lingot d'or
-  
+
+## Agent
+### Direction
+* Bas: 0
+* Gauche: 1
+* Haut: 2
+* Droite: 3
+
 ## Poids
 ### Liste
 * Lingot d'or: 9

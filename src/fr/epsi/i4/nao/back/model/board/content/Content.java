@@ -3,14 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fr.epsi.i4.nao.unit;
+package fr.epsi.i4.nao.back.model.board.content;
 
 /**
  *
  * @author cesar
  */
 public abstract class Content {
+
     protected Integer weight;
+
+    public Content() {}
 
     public Content(Integer weight) {
         this.weight = weight;

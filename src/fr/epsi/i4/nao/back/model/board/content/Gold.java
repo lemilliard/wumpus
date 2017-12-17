@@ -3,17 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fr.epsi.i4.nao.unit;
-
-import fr.epsi.i4.nao.unit.Content;
+package fr.epsi.i4.nao.back.model.board.content;
 
 /**
  *
  * @author cesar
  */
-public class Wall extends Content {
+public class Gold extends Content {
     
-    public Wall(Integer weight){
+    public Gold(Integer weight){
         super(weight);
+        this.weight = 9;
     }
 }
