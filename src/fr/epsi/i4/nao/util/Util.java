@@ -1,18 +1,30 @@
 package fr.epsi.i4.nao.util;
 
+import java.security.SecureRandom;
+
 /**
  * Created by tkint on 15/12/2017.
  */
 public class Util {
 
     public static int randomInt(int min, int max) {
-        int rand = min;
-        for (int i = min; i < max; i++) {
-            if (((Math.random() * 100) * Math.random()) > ((Math.random() * 100) * Math.random())) {
-                rand++;
-            }
-        }
-        return rand;
+        SecureRandom secureRandom = new SecureRandom();
+        return secureRandom.nextInt(max - min + 1) + min;
+//        int rand = (max - min) / 2;
+//        for (int i = min; i < max; i++) {
+//            if (((Math.random() * 100) * Math.random()) > ((Math.random() * 100) * Math.random())) {
+//                rand++;
+//                if (rand > max) {
+//                    rand = min;
+//                }
+//            } else {
+//                rand--;
+//                if (rand < min) {
+//                    rand = max;
+//                }
+//            }
+//        }
+//        return rand;
     }
 
     public static int doubleRand() {

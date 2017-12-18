@@ -9,10 +9,9 @@ package fr.epsi.i4.nao.back.model.board.content;
  *
  * @author cesar
  */
-public class Breeze extends Content {
+public class Breeze extends IContent {
 
-    public Breeze(Integer weight) {
-        super(weight);
-        this.weight = 2;
+    public Breeze() {
+        super();
     }
 }

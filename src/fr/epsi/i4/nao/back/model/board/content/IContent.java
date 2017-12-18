@@ -9,9 +9,17 @@ package fr.epsi.i4.nao.back.model.board.content;
  *
  * @author cesar
  */
-public class Pit extends IContent {
-    
-    public Pit(){
-        super(-4);
+public abstract class IContent {
+
+    private int weight;
+
+    public IContent() {}
+
+    public IContent(int weight) {
+        this.weight = weight;
+    }
+
+    public int getWeight() {
+        return weight;
     }
 }

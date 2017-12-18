@@ -9,9 +9,9 @@ package fr.epsi.i4.nao.back.model.board.content;
  *
  * @author cesar
  */
-public class Wall extends Content {
+public class Wall extends IContent {
     
-    public Wall(Integer weight){
-        super(weight);
+    public Wall(){
+        super(-9);
     }
 }

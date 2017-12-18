@@ -9,7 +9,8 @@ package fr.epsi.i4.nao.back.model.board.content;
  *
  * @author cesar
  */
-public class Agent extends Content {
+public class Agent extends IContent {
+
     private static Integer turn;
     private Integer arrow;
     private Coordinate position;

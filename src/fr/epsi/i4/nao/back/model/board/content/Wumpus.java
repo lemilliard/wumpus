@@ -9,9 +9,9 @@ package fr.epsi.i4.nao.back.model.board.content;
  *
  * @author cesar
  */
-public class Wumpus extends Content {
+public class Wumpus extends IContent {
     
-    public Wumpus(Integer weight){
-        super(weight);
+    public Wumpus(){
+        super(-6);
     }
 }

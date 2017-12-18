@@ -1,21 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package fr.epsi.i4.nao.back.model.board.content;
 
 /**
- *
- * @author cesar
+ * Created by tkint on 17/12/2017.
  */
-public abstract class Content {
-
-    protected Integer weight;
-
-    public Content() {}
-
-    public Content(Integer weight) {
-        this.weight = weight;
-    }
+public enum Content {
+    AGENT,
+    GOLD,
+    PIT,
+    WUMPUS,
+    BREEZE,
+    STENCH;
 }

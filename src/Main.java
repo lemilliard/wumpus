@@ -6,7 +6,7 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        Board board = new Board(4, 5);
+        Board board = Board.getInstance(4, 4);
 
         System.out.println(board);
     }

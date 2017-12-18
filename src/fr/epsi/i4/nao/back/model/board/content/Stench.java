@@ -9,9 +9,9 @@ package fr.epsi.i4.nao.back.model.board.content;
  *
  * @author cesar
  */
-public class Stench extends Content {
+public class Stench extends IContent {
     
-    public Stench(Integer weight){
-        super(weight);
+    public Stench(){
+        super();
     }
 }

@@ -10,6 +10,7 @@ package fr.epsi.i4.nao.back.model.board.content;
  * @author cesar
  */
 public class Coordinate {
+
     private Integer x;
     private Integer y;
 

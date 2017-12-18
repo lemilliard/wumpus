@@ -9,10 +9,9 @@ package fr.epsi.i4.nao.back.model.board.content;
  *
  * @author cesar
  */
-public class Gold extends Content {
+public class Gold extends IContent {
     
-    public Gold(Integer weight){
-        super(weight);
-        this.weight = 9;
+    public Gold(){
+        super(9);
     }
 }
