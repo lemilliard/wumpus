@@ -9,6 +9,7 @@ package fr.epsi.i4.nao.back.model.board.content;
  *
  * @author cesar
  */
+@Deprecated
 public class Wall extends IContent {
     
     public Wall(){

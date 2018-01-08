@@ -15,10 +15,10 @@ public class Board implements IBoard {
     private int height;
     private Case[][] cases;
 
-    private Board(int width, int height) {
+    private Board(int width, int height, int pitsPercentage) {
         this.width = width;
         this.height = height;
-        generate(width, height);
+        generate(width, height, pitsPercentage);
     }
 
     public int getWidth() {
@@ -47,15 +47,15 @@ public class Board implements IBoard {
         return str;
     }
 
-    public static Board getInstance(int width, int height) {
+    public static Board getInstance(int width, int height, int pitsPercentage) {
         if (instance == null) {
-            instance = new Board(width, height);
+            instance = new Board(width, height, pitsPercentage);
         }
         return instance;
     }
 
     public static Board getInstance() {
-        return instance;
+        return getInstance(4, 4, 15);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class Board implements IBoard {
     }
 
     @Override
-    public void generate(int width, int height) {
+    public void generate(int width, int height, int pitsPercentage) {
         cases = new Case[height][width];
         for (int y = 0; y < height; y++) {
             cases[y] = new Case[width];
@@ -72,26 +72,45 @@ public class Board implements IBoard {
                 cases[y][x] = new Case();
             }
         }
-        addAgent();
-        addPits(0.15d);
+        // Ajout de l'agent
+        setCaseContent(AGENT, 0, 0);
+        // Ajout des puits
+        int count = (int) ((double) pitsPercentage / 100.0d * ((double) width * height));
+        for (int i = 0; i < count; i++) {
+            addCaseContent(PIT, BREEZE);
+        }
+        // Ajout du Wumpus
+        addCaseContent(WUMPUS, STENCH);
+        // Ajout de l'or
+        addCaseContent(GOLD);
     }
 
     @Override
-    public void addCaseContent(int x, int y, Content content) {
+    public void addCaseContent(Content content, int x, int y) {
         getCase(x, y).addContent(content);
     }
 
-    private void setCaseContent(int x, int y, Content content) {
-        getCase(x, y).setContent(content);
+    private void addCaseContentAround(int x, int y, Content content) {
+        if (x > 0
+                && getCase(x - 1, y).canContain(content)) {
+            addCaseContent(content, x - 1, y);
+        }
+        if (y > 0
+                && getCase(x, y - 1).canContain(content)) {
+            addCaseContent(content, x, y - 1);
+        }
+        if (x < width - 1
+                && getCase(x + 1, y).canContain(content)) {
+            addCaseContent(content, x + 1, y);
+        }
+        if (y < height - 1
+                && getCase(x, y + 1).canContain(content)) {
+            addCaseContent(content, x, y + 1);
+        }
     }
 
-    @Override
-    public void addPits(double percentage) {
-        int count = (int) (percentage * ((double) width * height));
-        for (int i = 0; i < count; i++) {
-            int[] xy = getRandomCoordinatesForContent(BREEZE);
-            addPit(xy[0], xy[1]);
-        }
+    private void setCaseContent(Content content, int x, int y) {
+        getCase(x, y).setContent(content);
     }
 
     private int[] getRandomCoordinatesForContent(Content content) {
@@ -104,38 +123,17 @@ public class Board implements IBoard {
         return xy;
     }
 
-    public void addPit(int x, int y) {
-        if (x > 0
-                && getCase(x - 1, y).canContain(BREEZE)) {
-            addCaseContent(x - 1, y, BREEZE);
-        }
-        if (y > 0
-                && getCase(x, y - 1).canContain(BREEZE)) {
-            addCaseContent(x, y - 1, BREEZE);
-        }
-        if (x < width - 1
-                && getCase(x + 1, y).canContain(BREEZE)) {
-            addCaseContent(x + 1, y, BREEZE);
-        }
-        if (y < height - 1
-                && getCase(x, y + 1).canContain(BREEZE)) {
-            addCaseContent(x, y + 1, BREEZE);
-        }
-        setCaseContent(x, y, PIT);
+    private void addCaseContent(Content content) {
+        addCaseContent(content, null);
     }
 
-    @Override
-    public void addAgent() {
-        addCaseContent(0, 0, AGENT);
-    }
-
-    @Override
-    public void addWumpus() {
-
-    }
-
-    @Override
-    public void addGold() {
-
+    private void addCaseContent(Content content, Content around) {
+        int[] xy = getRandomCoordinatesForContent(content);
+        int x = xy[0];
+        int y = xy[1];
+        addCaseContent(content, x, y);
+        if (around != null) {
+            addCaseContentAround(x, y, around);
+        }
     }
 }

@@ -89,20 +89,20 @@ public class Case implements ICase {
     }
 
     public boolean canContain(Content content) {
-        boolean canContain = false;
-        switch (content) {
-            case BREEZE:
-                canContain = !containsContents(BREEZE, PIT, WUMPUS);
-                break;
-            case STENCH:
-                canContain = !containsContents(STENCH, PIT, WUMPUS);
-                break;
-            case PIT:
-            case WUMPUS:
-            case GOLD:
-                canContain = !containsContents(AGENT, PIT, WUMPUS, GOLD);
-                break;
-        }
+        boolean canContain = !containsContents(content.getIncompatibleElements());
+//        switch (content) {
+//            case BREEZE:
+//                canContain = !containsContents(BREEZE, PIT, WUMPUS);
+//                break;
+//            case STENCH:
+//                canContain = !containsContents(STENCH, PIT, WUMPUS);
+//                break;
+//            case PIT:
+//            case WUMPUS:
+//            case GOLD:
+//                canContain = !containsContents(AGENT, PIT, WUMPUS, GOLD);
+//                break;
+//        }
         return canContain;
     }
 

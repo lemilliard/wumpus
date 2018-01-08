@@ -1,7 +1,6 @@
 package fr.epsi.i4.nao.back.model.board;
 
 import fr.epsi.i4.nao.back.model.board.content.Content;
-import fr.epsi.i4.nao.back.model.board.content.IContent;
 
 /**
  * Les coordonnées du Board sont inversées quand on attaque directement le tableaux des Cases
@@ -24,8 +23,9 @@ public interface IBoard {
      * Génère le board
      * @param width
      * @param height
+     * @param pitsPercentage
      */
-    void generate(int width, int height);
+    void generate(int width, int height, int pitsPercentage);
 
     /**
      * Ajoute un contenu à la case spécifiée
@@ -33,26 +33,5 @@ public interface IBoard {
      * @param y
      * @param content
      */
-    void addCaseContent(int x, int y, Content content);
-
-    /**
-     * Ajoute les puits selon le pourcentage d'occupation
-     * @param percentage
-     */
-    void addPits(double percentage);
-
-    /**
-     * Ajoute l'agent
-     */
-    void addAgent();
-
-    /**
-     * Ajoute le Wumpus
-     */
-    void addWumpus();
-
-    /**
-     * Ajoute l'or
-     */
-    void addGold();
+    void addCaseContent(Content content, int x, int y);
 }

@@ -9,6 +9,7 @@ package fr.epsi.i4.nao.back.model.board.content;
  *
  * @author cesar
  */
+@Deprecated
 public class Gold extends IContent {
     
     public Gold(){
