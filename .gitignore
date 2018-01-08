@@ -4,3 +4,5 @@ nbproject/
 /build/
 build.xml
 manifest.mf
+_config.yml
+Wumpus.iml
