@@ -3,7 +3,7 @@ package fr.epsi.i4.nao.back.model.board;
 import fr.epsi.i4.nao.back.model.board.content.Content;
 
 /**
- * Les coordonnées du Board sont inversées quand on attaque directement le tableaux des Cases
+ * Les coordonnées du FrontBoard sont inversées quand on attaque directement le tableaux des Cases
  * Il faut donc utiliser les méthodes dédiées comme getCase ou addCaseContent pour avoir les
  * coordonnées dans le bon ordre et éviter les erreurs
  *

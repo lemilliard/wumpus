@@ -3,7 +3,7 @@ package fr.epsi.i4.nao.back.model.board;
 import fr.epsi.i4.nao.back.model.board.content.Content;
 import fr.epsi.i4.nao.back.model.board.content.Weight;
 
-import static fr.epsi.i4.nao.back.model.board.content.Content.*;
+import static fr.epsi.i4.nao.back.model.board.content.Content.AGENT;
 import static fr.epsi.i4.nao.back.model.board.content.Weight.DEFAULT;
 
 /**
@@ -11,119 +11,129 @@ import static fr.epsi.i4.nao.back.model.board.content.Weight.DEFAULT;
  */
 public class Case implements ICase {
 
-    private Weight weight;
-    private Content[] contents;
+	private Weight weight;
 
-    public Case() {
-        this.weight = DEFAULT;
-        empty();
-    }
+	private Content[] contents;
 
-    public Weight getWeight() {
-        return weight;
-    }
+	public Case() {
+		this.weight = DEFAULT;
+		empty();
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
+	public Weight getWeight() {
+		return weight;
+	}
 
-        for (int i = 0; i < contents.length; i++) {
-            if (contents[i] == null) {
-                stringBuilder.append("_");
-            } else {
-                stringBuilder.append(contents[i].name().substring(0, 1));
-            }
-        }
+	public Content[] getContents() {
+		return contents;
+	}
 
-        return stringBuilder.toString();
-    }
+	@Override public String toString() {
+		StringBuilder stringBuilder = new StringBuilder();
 
-    public void empty() {
-        contents = new Content[4];
-    }
+		for (int i = 0; i < contents.length; i++) {
+			if (contents[i] == null) {
+				stringBuilder.append("_");
+			} else {
+				stringBuilder.append(contents[i].name().substring(0, 1));
+			}
+		}
 
-    @Override
-    public Content addContent(Content content) {
-        boolean added = false;
-        int i = 0;
-        while (i < this.contents.length && !added) {
-            if (this.contents[i] == null) {
-                this.contents[i] = content;
-                added = true;
-            }
-            i++;
-        }
-        return content;
-    }
+		return stringBuilder.toString();
+	}
 
-    public void setContent(Content content) {
-        empty();
-        addContent(content);
-    }
+	public void empty() {
+		contents = new Content[4];
+	}
 
-    @Override
-    public boolean containsContent(Content content) {
-        boolean contains = false;
-        int i = 0;
-        while (i < this.contents.length && !contains) {
-            if (this.contents[i] == content) {
-                contains = true;
-            }
-            i++;
-        }
-        return contains;
-    }
+	@Override public Content addContent(Content content) {
+		boolean added = false;
+		int i = 0;
+		while (i < this.contents.length && !added) {
+			if (this.contents[i] == null) {
+				this.contents[i] = content;
+				added = true;
+			}
+			i++;
+		}
+		return content;
+	}
 
-    @Override
-    public boolean containsContents(Content... contents) {
-        boolean contains = false;
-        for (Content content : contents) {
-            contains |= containsContent(content);
-        }
-        return contains;
-    }
+	public boolean removeContent(Content content) {
+		boolean removed = false;
+		int i = 0;
+		while (i < this.contents.length && !removed) {
+			if (this.contents[i].equals(content)) {
+				this.contents[i] = null;
+				removed = true;
+			}
+			i++;
+		}
+		return removed;
+	}
 
-    @Override
-    public boolean containsAnythingButAgent() {
-        return contents.length > 0 && !containsContent(AGENT);
-    }
+	public void setContent(Content content) {
+		empty();
+		addContent(content);
+	}
 
-    public boolean canContain(Content content) {
-        boolean canContain = !containsContents(content.getIncompatibleElements());
-//        switch (content) {
-//            case BREEZE:
-//                canContain = !containsContents(BREEZE, PIT, WUMPUS);
-//                break;
-//            case STENCH:
-//                canContain = !containsContents(STENCH, PIT, WUMPUS);
-//                break;
-//            case PIT:
-//            case WUMPUS:
-//            case GOLD:
-//                canContain = !containsContents(AGENT, PIT, WUMPUS, GOLD);
-//                break;
-//        }
-        return canContain;
-    }
+	@Override public boolean containsContent(Content content) {
+		boolean contains = false;
+		int i = 0;
+		while (i < this.contents.length && !contains) {
+			if (this.contents[i] == content) {
+				contains = true;
+			}
+			i++;
+		}
+		return contains;
+	}
 
-    @Override
-    public int calculateWeight() {
-        int weight = 0;
-        for (Content content : contents) {
-            if (content != null) {
-//                weight += content;
-            }
-        }
-        return weight;
-    }
+	@Override public boolean containsContents(Content... contents) {
+		boolean contains = false;
+		for (Content content : contents) {
+			contains |= containsContent(content);
+		}
+		return contains;
+	}
 
-    @Override
-    public boolean hasBeenVisited() {
-        return false;
-    }
+	@Override public boolean containsAnythingButAgent() {
+		return contents.length > 0 && !containsContent(AGENT);
+	}
 
-    @Override
-    public int calculateSafety() {
-        return 0;
-    }
+	public boolean canContain(Content content) {
+		boolean canContain = !containsContents(content.getIncompatibleElements());
+		//        switch (content) {
+		//            case BREEZE:
+		//                canContain = !containsContents(BREEZE, PIT, WUMPUS);
+		//                break;
+		//            case STENCH:
+		//                canContain = !containsContents(STENCH, PIT, WUMPUS);
+		//                break;
+		//            case PIT:
+		//            case WUMPUS:
+		//            case GOLD:
+		//                canContain = !containsContents(AGENT, PIT, WUMPUS, GOLD);
+		//                break;
+		//        }
+		return canContain;
+	}
+
+	@Override public int calculateWeight() {
+		int weight = 0;
+		for (Content content : contents) {
+			if (content != null) {
+				//                weight += content;
+			}
+		}
+		return weight;
+	}
+
+	@Override public boolean hasBeenVisited() {
+		return false;
+	}
+
+	@Override public int calculateSafety() {
+		return 0;
+	}
 }
