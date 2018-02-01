@@ -4,12 +4,15 @@ import fr.epsi.i4.nao.back.model.board.Board;
 import fr.epsi.i4.nao.back.model.board.Direction;
 
 import static fr.epsi.i4.nao.back.model.board.content.Content.AGENT;
+import static fr.epsi.i4.nao.back.model.board.content.Content.GOLD;
 import static fr.epsi.i4.nao.back.model.board.content.Content.PIT;
 import static fr.epsi.i4.nao.back.model.board.content.Content.WUMPUS;
 
 public class Agent {
 
 	private boolean alive = true;
+
+	private boolean hasGold = false;
 
 	private int x;
 
@@ -55,6 +58,7 @@ public class Agent {
 	private void move(int x, int y) {
 		if (x >= 0 && x < board.getWidth() && y >= 0 && y < board.getHeight()) {
 			verifyAlive(x, y);
+			verifyHasGold(x, y);
 			board.getCase(this.x, this.y).removeContent(AGENT);
 			board.getCase(x, y).addContent(AGENT);
 			this.x = x;
@@ -66,5 +70,15 @@ public class Agent {
 		if (board.getCase(x, y).containsContent(PIT) || board.getCase(x, y).containsContent(WUMPUS)) {
 			alive = false;
 		}
+	}
+
+	private void verifyHasGold(int x, int y) {
+		if (board.getCase(x, y).containsContent(GOLD)) {
+			hasGold = true;
+		}
+	}
+
+	public boolean hasGold() {
+		return hasGold;
 	}
 }

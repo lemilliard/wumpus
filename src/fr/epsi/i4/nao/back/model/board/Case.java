@@ -9,7 +9,7 @@ import static fr.epsi.i4.nao.back.model.board.content.Weight.DEFAULT;
 /**
  * Created by tkint on 23/11/2017.
  */
-public class Case implements ICase {
+public class Case {
 
 	private Weight weight;
 
@@ -22,6 +22,10 @@ public class Case implements ICase {
 
 	public Weight getWeight() {
 		return weight;
+	}
+
+	public void setWeight(Weight weight) {
+		this.weight = weight;
 	}
 
 	public Content[] getContents() {
@@ -46,7 +50,7 @@ public class Case implements ICase {
 		contents = new Content[4];
 	}
 
-	@Override public Content addContent(Content content) {
+	public Content addContent(Content content) {
 		boolean added = false;
 		int i = 0;
 		while (i < this.contents.length && !added) {
@@ -77,7 +81,7 @@ public class Case implements ICase {
 		addContent(content);
 	}
 
-	@Override public boolean containsContent(Content content) {
+	public boolean containsContent(Content content) {
 		boolean contains = false;
 		int i = 0;
 		while (i < this.contents.length && !contains) {
@@ -89,7 +93,7 @@ public class Case implements ICase {
 		return contains;
 	}
 
-	@Override public boolean containsContents(Content... contents) {
+	public boolean containsContents(Content... contents) {
 		boolean contains = false;
 		for (Content content : contents) {
 			contains |= containsContent(content);
@@ -97,43 +101,19 @@ public class Case implements ICase {
 		return contains;
 	}
 
-	@Override public boolean containsAnythingButAgent() {
+	public boolean containsAnythingButAgent() {
 		return contents.length > 0 && !containsContent(AGENT);
 	}
 
 	public boolean canContain(Content content) {
-		boolean canContain = !containsContents(content.getIncompatibleElements());
-		//        switch (content) {
-		//            case BREEZE:
-		//                canContain = !containsContents(BREEZE, PIT, WUMPUS);
-		//                break;
-		//            case STENCH:
-		//                canContain = !containsContents(STENCH, PIT, WUMPUS);
-		//                break;
-		//            case PIT:
-		//            case WUMPUS:
-		//            case GOLD:
-		//                canContain = !containsContents(AGENT, PIT, WUMPUS, GOLD);
-		//                break;
-		//        }
-		return canContain;
+		return !containsContents(content.getIncompatibleElements());
 	}
 
-	@Override public int calculateWeight() {
-		int weight = 0;
-		for (Content content : contents) {
-			if (content != null) {
-				//                weight += content;
-			}
-		}
-		return weight;
-	}
-
-	@Override public boolean hasBeenVisited() {
+	public boolean hasBeenVisited() {
 		return false;
 	}
 
-	@Override public int calculateSafety() {
+	public int calculateSafety() {
 		return 0;
 	}
 }

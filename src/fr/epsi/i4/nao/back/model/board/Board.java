@@ -14,7 +14,7 @@ import static fr.epsi.i4.nao.back.model.board.content.Content.WUMPUS;
 /**
  * Created by tkint on 23/11/2017.
  */
-public class Board implements IBoard {
+public class Board {
 
 	private int width;
 
@@ -60,11 +60,11 @@ public class Board implements IBoard {
 		return str;
 	}
 
-	@Override public Case getCase(int x, int y) {
+	public Case getCase(int x, int y) {
 		return cases[y][x];
 	}
 
-	@Override public void generate(int width, int height, int pitsPercentage) {
+	public void generate(int width, int height, int pitsPercentage) {
 		cases = new Case[height][width];
 		for (int y = 0; y < height; y++) {
 			cases[y] = new Case[width];
@@ -85,7 +85,7 @@ public class Board implements IBoard {
 		addCaseContent(GOLD);
 	}
 
-	@Override public void addCaseContent(Content content, int x, int y) {
+	public void addCaseContent(Content content, int x, int y) {
 		getCase(x, y).addContent(content);
 	}
 

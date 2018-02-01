@@ -12,12 +12,16 @@ import static fr.epsi.i4.nao.back.model.board.Direction.UP;
 
 public class Game extends JFrame {
 
+	public static final int caseSize = 100;
+
 	private final Board board;
+
+	private int rounds = 0;
 
 	public Game(Board board) {
 		this.board = board;
 		setTitle("Wumpus");
-		setSize(800, 600);
+		setSize(board.getWidth() * caseSize, board.getHeight() * caseSize);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setContentPane(new FrontGame(board));
@@ -36,16 +40,24 @@ public class Game extends JFrame {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			// Utiliser l'arbre de décision
-
-			// Process result
-			//			processTreeResult("UP");
-
-			refresh();
-
-			// Vérifie la fin du jeu
-			verifyAgentAlive();
+			playRound();
 		}
+	}
+
+	private void playRound() {
+		// Incrémente le nombre de tour
+		rounds++;
+
+		// Utiliser l'arbre de décision
+
+		// Process result
+		//		processTreeResult("UP");
+
+		// Mise à jour de l'affichage
+		refresh();
+
+		// Vérifie l'état du jeu
+		verifyGameState();
 	}
 
 	public void refresh() {
@@ -70,9 +82,13 @@ public class Game extends JFrame {
 		}
 	}
 
-	private void verifyAgentAlive() {
+	private void verifyGameState() {
+		System.out.println("Tour " + rounds);
 		if (!board.getAgent().isAlive()) {
 			System.out.println("L'agent est décédé...");
+			System.exit(0);
+		} else if (board.getAgent().hasGold()) {
+			System.out.println("L'agent a récupéré l'or!!");
 			System.exit(0);
 		}
 	}
