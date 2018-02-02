@@ -3,6 +3,7 @@ package fr.epsi.i4.nao.back.model;
 import fr.epsi.i4.nao.back.model.board.Board;
 import fr.epsi.i4.nao.back.model.board.Direction;
 
+import static fr.epsi.i4.nao.back.model.board.Direction.UP;
 import static fr.epsi.i4.nao.back.model.board.content.Content.AGENT;
 import static fr.epsi.i4.nao.back.model.board.content.Content.GOLD;
 import static fr.epsi.i4.nao.back.model.board.content.Content.PIT;
@@ -20,10 +21,13 @@ public class Agent {
 
 	private Board board;
 
+	private Direction direction;
+
 	public Agent(Board board) {
 		this.board = board;
-		x = 0;
-		y = 0;
+		this.x = 1;
+		this.y = 1;
+		this.direction = UP;
 	}
 
 	public boolean isAlive() {
@@ -38,7 +42,18 @@ public class Agent {
 		return y;
 	}
 
-	public void move(Direction direction) {
+	public int move(Direction direction) {
+		int toursUtilises = 1;
+		if (!direction.equals(this.direction)) {
+			toursUtilises++;
+			System.out.println("L'agent se tourne");
+		}
+		if (direction.getOpposite().equals(this.direction)) {
+			toursUtilises++;
+			System.out.println("L'agent se tourne encore");
+		}
+		this.direction = direction;
+		System.out.println("L'agent va vers " + direction);
 		switch (direction) {
 			case UP:
 				move(x, y + 1);
@@ -53,10 +68,11 @@ public class Agent {
 				move(x + 1, y);
 				break;
 		}
+		return toursUtilises;
 	}
 
 	private void move(int x, int y) {
-		if (x >= 0 && x < board.getWidth() && y >= 0 && y < board.getHeight()) {
+		if (x >= 1 && x < board.getWidth() - 1 && y >= 1 && y < board.getHeight() - 1) {
 			verifyAlive(x, y);
 			verifyHasGold(x, y);
 			updateBoard();

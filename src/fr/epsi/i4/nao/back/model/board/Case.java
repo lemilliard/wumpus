@@ -4,8 +4,6 @@ import fr.epsi.i4.nao.back.model.board.content.Content;
 import fr.epsi.i4.nao.back.model.board.content.Weight;
 
 import static fr.epsi.i4.nao.back.model.board.content.Content.AGENT;
-import static fr.epsi.i4.nao.back.model.board.content.Content.PIT;
-import static fr.epsi.i4.nao.back.model.board.content.Content.WALL;
 import static fr.epsi.i4.nao.back.model.board.content.Weight.DEFAULT;
 
 /**
@@ -67,15 +65,13 @@ public class Case {
 
 	public boolean removeContent(Content content) {
 		boolean removed = false;
-		if (content != WALL && content != PIT && content != null && this.contents != null && this.contents.length > 0) {
-			int i = 0;
-			while (i < this.contents.length && !removed) {
-				if (this.contents[i] != null && this.contents[i].equals(content)) {
-					this.contents[i] = null;
-					removed = true;
-				}
-				i++;
+		int i = 0;
+		while (i < this.contents.length && !removed) {
+			if (this.contents[i] != null && this.contents[i].equals(content)) {
+				this.contents[i] = null;
+				removed = true;
 			}
+			i++;
 		}
 		return removed;
 	}

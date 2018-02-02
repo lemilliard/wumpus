@@ -1,5 +1,7 @@
 package fr.epsi.i4.nao.front;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 
 import fr.decisiontree.Config;
@@ -69,32 +71,62 @@ public class Game extends JFrame {
 		}
 	}
 
+	public void reset() {
+		System.out.println("------------------------");
+		System.out.println("New Game");
+		System.out.println("------------------------");
+		rounds = 0;
+		board.regenerate();
+		refresh();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
 	//TODO: Le coton
 	//TODO: Quand il n'y a rien autour, lancer aléatoire
 	private void playRound() {
-		// Incrémente le nombre de tour
-		rounds++;
+		// Défini les directions possibles
+		List<String> directionsPossibles = new ArrayList<>();
+		if (board.getAgent().getX() > 1) {
+			directionsPossibles.add("Gauche");
+		}
+		if (board.getAgent().getY() > 1) {
+			directionsPossibles.add("Bas");
+		}
+		if (board.getAgent().getX() < board.getWidth() - 2) {
+			directionsPossibles.add("Droite");
+		}
+		if (board.getAgent().getY() < board.getHeight() - 2) {
+			directionsPossibles.add("Haut");
+		}
 
 		// Utiliser l'arbre de décision
-		String[] tmpEntry = new String[7];
-		String choice = null;
+		String[] tmpEntry;
+		String tmpDecision;
+		List<String> possibleChoices = new ArrayList<>();
 		int i = 0;
-		while (i < directions.length && choice == null) {
-			tmpEntry = new String[] { "Rien", "Rien", "Rien", "Rien", "Rien", directions[i], null };
-			tmpEntry[6] = DecisionTree.decide(tmpEntry);
-			if (tmpEntry[6] != null && tmpEntry[6].equals("Vivant")) {
-				choice = directions[i];
+		while (i < directionsPossibles.size()) {
+			tmpEntry = new String[] { "Rien", "Rien", "Rien", "Rien", "Rien", directionsPossibles.get(i), null };
+			tmpDecision = DecisionTree.decide(tmpEntry);
+			if (tmpDecision != null && tmpDecision.equals("Vivant")) {
+				possibleChoices.add(directionsPossibles.get(i));
 			}
 			i++;
 		}
 
-		if (choice == null) {
-			choice = directions[Util.randomInt(0, 3)];
-			tmpEntry = new String[] { "Rien", "Rien", "Rien", "Rien", "Rien", choice, null };
+		if (possibleChoices.isEmpty()) {
+			possibleChoices.add(directionsPossibles.get(Util.randomInt(0, directionsPossibles.size() - 1)));
 		}
 
 		// Process result
-		processTreeResult(choice);
+		String choice = possibleChoices.get(Util.randomInt(0, possibleChoices.size() - 1));
+		tmpEntry = new String[] { "Rien", "Rien", "Rien", "Rien", "Rien", choice, null };
+
+		// Incrémente les tours et process result
+		rounds += processTreeResult(choice);
 
 		// Mise à jour de l'affichage
 		refresh();
@@ -114,10 +146,10 @@ public class Game extends JFrame {
 
 		if (!board.getAgent().isAlive()) {
 			System.out.println("L'agent est décédé...");
-			System.exit(0);
+			reset();
 		} else if (board.getAgent().hasGold()) {
 			System.out.println("L'agent a récupéré l'or!!");
-			System.exit(0);
+			reset();
 		}
 	}
 
@@ -125,21 +157,23 @@ public class Game extends JFrame {
 		getGame().refresh();
 	}
 
-	private void processTreeResult(String treeResult) {
+	private int processTreeResult(String treeResult) {
 		Agent agent = board.getAgent();
+		int toursUtilises = 0;
 		switch (treeResult) {
 			case "Gauche":
-				agent.move(LEFT);
+				toursUtilises = agent.move(LEFT);
 				break;
 			case "Droite":
-				agent.move(RIGHT);
+				toursUtilises = agent.move(RIGHT);
 				break;
 			case "Haut":
-				agent.move(UP);
+				toursUtilises = agent.move(UP);
 				break;
 			case "Bas":
-				agent.move(DOWN);
+				toursUtilises = agent.move(DOWN);
 				break;
 		}
+		return toursUtilises;
 	}
 }

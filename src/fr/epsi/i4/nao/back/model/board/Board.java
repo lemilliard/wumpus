@@ -21,15 +21,18 @@ public class Board {
 
 	private int height;
 
+	private int pitsPercentage;
+
 	private Case[][] cases;
 
 	private Agent agent;
 
 	public Board(int width, int height, int pitsPercentage) {
-		this.agent = new Agent(this);
 		this.width = width + 2;
 		this.height = height + 2;
-		generate(pitsPercentage);
+		this.pitsPercentage = pitsPercentage;
+		this.agent = new Agent(this);
+		generate();
 	}
 
 	public int getWidth() {
@@ -65,7 +68,7 @@ public class Board {
 		return cases[y][x];
 	}
 
-	public void generate(int pitsPercentage) {
+	public void generate() {
 		cases = new Case[height][width];
 		for (int y = 0; y < height; y++) {
 			cases[y] = new Case[width];
@@ -88,6 +91,12 @@ public class Board {
 		addCaseContent(WUMPUS, STENCH);
 		// Ajout de l'or
 		addCaseContent(GOLD);
+	}
+
+	public void regenerate() {
+		cases = null;
+		agent = new Agent(this);
+		generate();
 	}
 
 	public void addCaseContent(Content content, int x, int y) {
