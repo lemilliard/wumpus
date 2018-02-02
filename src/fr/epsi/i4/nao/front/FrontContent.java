@@ -3,6 +3,7 @@ package fr.epsi.i4.nao.front;
 import java.io.File;
 
 public enum FrontContent {
+	WALL("wall.jpg"), //
 	AGENT("agent.png"), //
 	GOLD("gold.png"), //
 	PIT("pit.png"), //

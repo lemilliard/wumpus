@@ -9,6 +9,7 @@ import static fr.epsi.i4.nao.back.model.board.content.Content.BREEZE;
 import static fr.epsi.i4.nao.back.model.board.content.Content.GOLD;
 import static fr.epsi.i4.nao.back.model.board.content.Content.PIT;
 import static fr.epsi.i4.nao.back.model.board.content.Content.STENCH;
+import static fr.epsi.i4.nao.back.model.board.content.Content.WALL;
 import static fr.epsi.i4.nao.back.model.board.content.Content.WUMPUS;
 
 /**
@@ -26,9 +27,9 @@ public class Board {
 
 	public Board(int width, int height, int pitsPercentage) {
 		this.agent = new Agent(this);
-		this.width = width;
-		this.height = height;
-		generate(width, height, pitsPercentage);
+		this.width = width + 2;
+		this.height = height + 2;
+		generate(pitsPercentage);
 	}
 
 	public int getWidth() {
@@ -64,18 +65,22 @@ public class Board {
 		return cases[y][x];
 	}
 
-	public void generate(int width, int height, int pitsPercentage) {
+	public void generate(int pitsPercentage) {
 		cases = new Case[height][width];
 		for (int y = 0; y < height; y++) {
 			cases[y] = new Case[width];
 			for (int x = 0; x < width; x++) {
 				cases[y][x] = new Case();
+				// Ajout des murs
+				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
+					setCaseContent(WALL, x, y);
+				}
 			}
 		}
 		// Ajout de l'agent
-		setCaseContent(AGENT, 0, 0);
+		setCaseContent(AGENT, 1, 1);
 		// Ajout des puits
-		int count = (int) ((double) pitsPercentage / 100.0d * ((double) width * height));
+		int count = (int) ((double) pitsPercentage / 100.0d * ((double) (width - 2) * (height - 2)));
 		for (int i = 0; i < count; i++) {
 			addCaseContent(PIT, BREEZE);
 		}
@@ -110,8 +115,8 @@ public class Board {
 
 	private int[] getRandomCoordinatesForContent(Content content) {
 		int[] xy = new int[2];
-		xy[0] = Util.randomInt(0, width - 1);
-		xy[1] = Util.randomInt(0, height - 1);
+		xy[0] = Util.randomInt(1, width - 2);
+		xy[1] = Util.randomInt(1, height - 2);
 		if (!getCase(xy[0], xy[1]).canContain(content)) {
 			return getRandomCoordinatesForContent(content);
 		}
@@ -126,7 +131,11 @@ public class Board {
 		int[] xy = getRandomCoordinatesForContent(content);
 		int x = xy[0];
 		int y = xy[1];
-		addCaseContent(content, x, y);
+		if (content.equals(PIT)) {
+			setCaseContent(content, x, y);
+		} else {
+			addCaseContent(content, x, y);
+		}
 		if (around != null) {
 			addCaseContentAround(x, y, around);
 		}

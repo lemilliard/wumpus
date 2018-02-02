@@ -69,6 +69,8 @@ public class Game extends JFrame {
 		}
 	}
 
+	//TODO: Le coton
+	//TODO: Quand il n'y a rien autour, lancer aléatoire
 	private void playRound() {
 		// Incrémente le nombre de tour
 		rounds++;
@@ -80,7 +82,7 @@ public class Game extends JFrame {
 		while (i < directions.length && choice == null) {
 			tmpEntry = new String[] { "Rien", "Rien", "Rien", "Rien", "Rien", directions[i], null };
 			tmpEntry[6] = DecisionTree.decide(tmpEntry);
-			if (tmpEntry[6].equals("Vivant")) {
+			if (tmpEntry[6] != null && tmpEntry[6].equals("Vivant")) {
 				choice = directions[i];
 			}
 			i++;
@@ -106,7 +108,7 @@ public class Game extends JFrame {
 			tmpEntry[6] = "Mort";
 		}
 		DecisionTree.addData(tmpEntry);
-		//		DecisionTree.regenerateTree();
+		DecisionTree.regenerateTree();
 		DecisionTree.print();
 		DecisionTree.save();
 

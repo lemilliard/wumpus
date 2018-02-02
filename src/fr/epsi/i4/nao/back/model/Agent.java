@@ -59,6 +59,7 @@ public class Agent {
 		if (x >= 0 && x < board.getWidth() && y >= 0 && y < board.getHeight()) {
 			verifyAlive(x, y);
 			verifyHasGold(x, y);
+			updateBoard();
 			board.getCase(this.x, this.y).removeContent(AGENT);
 			board.getCase(x, y).addContent(AGENT);
 			this.x = x;
@@ -80,5 +81,9 @@ public class Agent {
 
 	public boolean hasGold() {
 		return hasGold;
+	}
+
+	private void updateBoard() {
+
 	}
 }

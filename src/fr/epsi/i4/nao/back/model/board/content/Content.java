@@ -1,20 +1,13 @@
 package fr.epsi.i4.nao.back.model.board.content;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
  * Created by tkint on 17/12/2017.
  */
 public enum Content {
-    AGENT(true),
-    GOLD(true),
-    PIT(true),
-    WUMPUS(true),
-    BREEZE(false),
-    STENCH(false);
+	WALL(true), AGENT(true), GOLD(true), PIT(true), WUMPUS(true), BREEZE(false), STENCH(false);
 
     private boolean solid;
 
@@ -26,13 +19,14 @@ public enum Content {
         Set<Content> contents = new HashSet<>();
         contents.add(this);
         contents.add(PIT);
-        for (Content content : Content.values()) {
-            if (content.isSolid() && isSolid()) {
-                contents.add(content);
-            }
-        }
-        return contents.toArray(new Content[contents.size()]);
-    }
+		contents.add(WALL);
+		for (Content content : Content.values()) {
+			if (content.isSolid() && isSolid()) {
+				contents.add(content);
+			}
+		}
+		return contents.toArray(new Content[contents.size()]);
+	}
 
     public boolean isSolid() {
         return solid;
