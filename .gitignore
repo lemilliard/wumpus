@@ -2,6 +2,7 @@
 out/
 nbproject/
 /build/
+/target/
 build.xml
 manifest.mf
 _config.yml
