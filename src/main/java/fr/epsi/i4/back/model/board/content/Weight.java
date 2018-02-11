@@ -5,10 +5,6 @@ package fr.epsi.i4.back.model.board.content;
  */
 public enum Weight {
     GOLD(9),
-    VISITED_4(4),
-    VISITED_3(3),
-    VISITED_2(2),
-    VISITED_1(1),
     SAFE(0),
     DEFAULT(-1),
     POSSIBLE_PIT(-2),
@@ -26,5 +22,13 @@ public enum Weight {
 
     public int getWeight() {
         return weight;
+    }
+
+    public static String[] getNames() {
+	    String[] names = new String[values().length];
+	    for (int i = 0; i < values().length; i++) {
+		    names[i] = values()[i].name();
+	    }
+	    return names;
     }
 }

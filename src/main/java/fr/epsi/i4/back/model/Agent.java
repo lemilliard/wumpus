@@ -1,12 +1,11 @@
 package fr.epsi.i4.back.model;
 
-import fr.epsi.i4.back.model.board.Direction;
 import fr.epsi.i4.back.model.board.Board;
+import fr.epsi.i4.back.model.board.Case;
+import fr.epsi.i4.back.model.board.Direction;
+import fr.epsi.i4.back.model.board.content.Content;
 
-import static fr.epsi.i4.back.model.board.content.Content.AGENT;
-import static fr.epsi.i4.back.model.board.content.Content.GOLD;
-import static fr.epsi.i4.back.model.board.content.Content.PIT;
-import static fr.epsi.i4.back.model.board.content.Content.WUMPUS;
+import static fr.epsi.i4.back.model.board.content.Weight.*;
 
 public class Agent {
 
@@ -72,24 +71,24 @@ public class Agent {
 
 	private void move(int x, int y) {
 		if (x >= 1 && x < board.getWidth() - 1 && y >= 1 && y < board.getHeight() - 1) {
-			verifyAlive(x, y);
-			verifyHasGold(x, y);
-			updateBoard();
-			board.getCase(this.x, this.y).removeContent(AGENT);
-			board.getCase(x, y).addContent(AGENT);
+			board.getCase(this.x, this.y).removeContent(Content.AGENT);
+			board.getCase(x, y).addContent(Content.AGENT);
 			this.x = x;
 			this.y = y;
+			verifyAlive();
+			verifyHasGold();
+			updateWeights();
 		}
 	}
 
-	private void verifyAlive(int x, int y) {
-		if (board.getCase(x, y).containsContent(PIT) || board.getCase(x, y).containsContent(WUMPUS)) {
+	private void verifyAlive() {
+		if (board.getCase(x, y).containsContent(Content.PIT) || board.getCase(x, y).containsContent(Content.WUMPUS)) {
 			alive = false;
 		}
 	}
 
-	private void verifyHasGold(int x, int y) {
-		if (board.getCase(x, y).containsContent(GOLD)) {
+	private void verifyHasGold() {
+		if (board.getCase(x, y).containsContent(Content.GOLD)) {
 			hasGold = true;
 		}
 	}
@@ -98,7 +97,31 @@ public class Agent {
 		return hasGold;
 	}
 
-	private void updateBoard() {
+	public void updateWeights() {
+		if (board.doesCaseContainsContent(x, y, Content.BREEZE)) {
+			for (Case caseAround : getCasesAround()) {
+				if (board.isCaseAlterable(caseAround)) {
+					board.setCaseWeight(caseAround, POSSIBLE_PIT);
+				}
+			}
+		} else if(board.doesCaseContainsContent(x, y, Content.STENCH)) {
+			for (Case caseAround : getCasesAround()) {
+				if (board.isCaseAlterable(caseAround)) {
+					board.setCaseWeight(caseAround, POSSIBLE_WUMPUS);
+				}
+			}
+		} else if (board.doesCaseContainsContent(x, y, Content.BREEZE) && board.doesCaseContainsContent(x, y, Content.STENCH)) {
+			for (Case caseAround : getCasesAround()) {
+				if (board.isCaseAlterable(caseAround)) {
+					board.setCaseWeight(caseAround, POSSIBLE_PIT_OR_WUMPUS);
+				}
+			}
+		} else {
+			board.setCaseWeight(x, y, SAFE);
+		}
+	}
 
+	public Case[] getCasesAround() {
+		return new Case[]{board.getCase(x - 1, y), board.getCase(x + 1, y), board.getCase(x, y - 1), board.getCase(x, y + 1)};
 	}
 }

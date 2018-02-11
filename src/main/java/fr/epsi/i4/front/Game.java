@@ -4,12 +4,16 @@ import fr.decisiontree.Config;
 import fr.decisiontree.DecisionTree;
 import fr.epsi.i4.back.model.Agent;
 import fr.epsi.i4.back.model.board.Board;
+import fr.epsi.i4.back.model.board.Case;
 import fr.epsi.i4.back.model.board.Direction;
+import fr.epsi.i4.back.model.board.content.Weight;
 import fr.epsi.i4.util.Util;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static fr.epsi.i4.back.model.board.content.Weight.SAFE;
 
 public class Game extends JFrame {
 
@@ -43,11 +47,11 @@ public class Game extends JFrame {
 
 	private void initDecisionTree() {
 		Config config = new Config("./decisionTree");
-		config.addAttribut("Actuelle", "Rien", "Brise", "Odeur", "BriseEtOdeur");
-		config.addAttribut(GAUCHE, "Rien", "Brise", "Odeur", "BriseEtOdeur", "Puit", "Wumpus");
-		config.addAttribut(DROITE, "Rien", "Brise", "Odeur", "BriseEtOdeur", "Puit", "Wumpus");
-		config.addAttribut(HAUT, "Rien", "Brise", "Odeur", "BriseEtOdeur", "Puit", "Wumpus");
-		config.addAttribut(BAS, "Rien", "Brise", "Odeur", "BriseEtOdeur", "Puit", "Wumpus");
+		config.addAttribut("Actuelle", Weight.getNames());
+		config.addAttribut(GAUCHE, Weight.getNames());
+		config.addAttribut(DROITE, Weight.getNames());
+		config.addAttribut(HAUT, Weight.getNames());
+		config.addAttribut(BAS, Weight.getNames());
 		config.addAttribut("Direction", GAUCHE, DROITE, HAUT, BAS);
 
 		config.addDecision("Vivant");
@@ -90,6 +94,9 @@ public class Game extends JFrame {
 	//TODO: Le coton
 	//TODO: Quand il n'y a rien autour, lancer aléatoire
 	private void playRound() {
+		// Cases autour de l'agent
+		Case[] casesAround = board.getAgent().getCasesAround();
+
 		// Défini les directions possibles
 		List<String> directionsPossibles = new ArrayList<>();
 		if (board.getAgent().getX() > 1) {
@@ -111,7 +118,15 @@ public class Game extends JFrame {
 		List<String> possibleChoices = new ArrayList<>();
 		int i = 0;
 		while (i < directionsPossibles.size()) {
-			tmpEntry = new String[]{"Rien", "Rien", "Rien", "Rien", "Rien", directionsPossibles.get(i), null};
+			tmpEntry = new String[]{
+					board.getAgentCase().getWeight().name(),
+					casesAround[0].getWeight().name(),
+					casesAround[1].getWeight().name(),
+					casesAround[2].getWeight().name(),
+					casesAround[3].getWeight().name(),
+					directionsPossibles.get(i),
+					null
+			};
 			tmpDecision = DecisionTree.decide(tmpEntry);
 			if (tmpDecision != null && tmpDecision.equals("Vivant")) {
 				possibleChoices.add(directionsPossibles.get(i));
@@ -125,7 +140,15 @@ public class Game extends JFrame {
 
 		// Process result
 		String choice = possibleChoices.get(Util.randomInt(0, possibleChoices.size() - 1));
-		tmpEntry = new String[]{"Rien", "Rien", "Rien", "Rien", "Rien", choice, null};
+		tmpEntry = new String[]{
+				board.getAgentCase().getWeight().name(),
+				casesAround[0].getWeight().name(),
+				casesAround[1].getWeight().name(),
+				casesAround[2].getWeight().name(),
+				casesAround[3].getWeight().name(),
+				choice,
+				null
+		};
 
 		// Incrémente les tours et process result
 		rounds += processTreeResult(choice);

@@ -1,5 +1,16 @@
 # Alice and Bob
 
+## Installation
+
+Pour pouvoir tester le programme, il faut d'abord installer la librairie DecisionTree disponible ici:
+https://github.com/LeMilliard/DecisionTree
+
+Suivez les instructions d'installation dans le README, puis faites un import Maven sur ce projet.
+
+Lancez le programme.
+
+Enjoy :)
+
 ## Paramétrage
 ### Alice
 * Balls: 10%

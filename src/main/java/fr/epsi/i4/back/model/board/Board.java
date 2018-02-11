@@ -2,6 +2,7 @@ package fr.epsi.i4.back.model.board;
 
 import fr.epsi.i4.back.model.Agent;
 import fr.epsi.i4.back.model.board.content.Content;
+import fr.epsi.i4.back.model.board.content.Weight;
 import fr.epsi.i4.util.Util;
 
 /**
@@ -25,6 +26,7 @@ public class Board {
 		this.pitsPercentage = pitsPercentage;
 		this.agent = new Agent(this);
 		generate();
+		this.agent.updateWeights();
 	}
 
 	public int getWidth() {
@@ -58,6 +60,10 @@ public class Board {
 
 	public Case getCase(int x, int y) {
 		return cases[y][x];
+	}
+
+	public Case getAgentCase() {
+		return getCase(agent.getX(), agent.getY());
 	}
 
 	public void generate() {
@@ -140,5 +146,31 @@ public class Board {
 		if (around != null) {
 			addCaseContentAround(x, y, around);
 		}
+	}
+
+	public boolean doesCaseContainsContent(int x, int y, Content content) {
+		return getCase(x, y).containsContent(content);
+	}
+
+	public boolean isCaseWeightEquals(int x, int y, Weight weight) {
+		return getCase(x, y).getWeight() != null && getCase(x, y).getWeight().equals(weight);
+	}
+
+	public boolean isCaseAlterable(Case c) {
+		return c.getWeight() == null || c.getWeight().getWeight() < 0;
+	}
+
+	public boolean isCaseAlterable(int x, int y) {
+		return isCaseAlterable(getCase(x, y));
+	}
+
+	public void setCaseWeight(Case c, Weight weight) {
+		if (isCaseAlterable(c)) {
+			c.setWeight(weight);
+		}
+	}
+
+	public void setCaseWeight(int x, int y, Weight weight) {
+		setCaseWeight(getCase(x, y), weight);
 	}
 }

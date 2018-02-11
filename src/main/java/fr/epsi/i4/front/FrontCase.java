@@ -32,6 +32,10 @@ public class FrontCase extends JPanel {
 				add(label);
 			}
 		}
+
+		JLabel label = new JLabel(Integer.toString(c.getWeight().getWeight()));
+		add(label);
+
 		validate();
 		repaint();
 	}
