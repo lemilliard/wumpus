@@ -1,34 +1,25 @@
 package fr.epsi.i4.front;
 
-import javax.swing.*;
+import java.awt.*;
 
-import fr.epsi.i4.back.model.board.Board;
+public class FrontBoard extends GridLayout {
 
-public class FrontBoard extends JPanel {
+	private int width;
 
-	private final Board board;
+	private int height;
 
-	public FrontBoard(Board board) {
-		this.board = board;
-		setLayout(new FrontBoardGrid(board.getWidth(), board.getHeight()));
-		setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+	public FrontBoard(int width, int height) {
+		this.width = width;
+		this.height = height;
+		this.setColumns(width);
+		this.setRows(height);
 	}
 
-	public FrontBoardGrid getBoard() {
-		return (FrontBoardGrid) getLayout();
+	public int getWidth() {
+		return width;
 	}
 
-	public void refresh() {
-		removeAll();
-		for (int y = board.getHeight() - 1; y > -1; y--) {
-			for (int x = 0; x < board.getWidth(); x++) {
-				FrontCase frontCase = new FrontCase(board.getCase(x, y));
-				add(frontCase);
-				//				frontCase.validate();
-				//				frontCase.repaint();
-			}
-		}
-		validate();
-		repaint();
+	public int getHeight() {
+		return height;
 	}
 }

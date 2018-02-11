@@ -42,7 +42,7 @@ public class FrontCase extends JPanel {
 			BufferedImage bufferedImage = ImageIO.read(file);
 			imageIcon = new ImageIcon(bufferedImage);
 			Image image = imageIcon.getImage();
-			Image scaledImage = image.getScaledInstance(FrontGame.caseSize, FrontGame.caseSize, Image.SCALE_SMOOTH);
+			Image scaledImage = image.getScaledInstance(Game.caseSize, Game.caseSize, Image.SCALE_SMOOTH);
 			imageIcon.setImage(scaledImage);
 		} catch (IOException e) {
 			e.printStackTrace();
