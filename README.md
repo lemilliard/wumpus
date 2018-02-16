@@ -11,7 +11,7 @@ Pour pouvoir tester le programme, il faut d'abord ajouter les lignes suivantes d
         <id>thomaskintRepoRead</id>
         <activation>
             <property>
-                <name>!doNotUseThomaskintRepoRead</name>
+                <name>!doNotUseThomasKintRepo</name>
             </property>
         </activation>
         <properties>
