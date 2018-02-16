@@ -144,19 +144,25 @@ public class Game extends JFrame implements KeyListener {
 			if (result != null) {
 				double ratio = result.getRatio();
 				if (result.getValue().equals("Vivant")) {
-					if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
-						for (int j = 0; j < (int) (ratio * 10); j++) {
-							possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-						}
-					}
+                                    if(!explore(possibleChoices, result, directionsPossibles.get(i))){
+                                        if(!verifierSafe(possibleChoices, result, directionsPossibles.get(i))){
+                                            for (int j = 0; j < (int) (ratio * 10); j++) {
+                                            	possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                                            }
+                                        }
+                                    }
 				} else {
-					if (ratio == 1) {
-						possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-					} else {
-						for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
-							possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-						}
-					}
+//                                    if (ratio == 1){
+//                                        possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+//                                    } else {
+                                    if(!explore(possibleChoices, result, directionsPossibles.get(i))){
+                                        if(!verifierSafe(possibleChoices, result, directionsPossibles.get(i))){
+                                            for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
+                                            	possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                                            }   
+                                        }
+                                    }
+//                                    }
 				}
 			}
 			i++;
@@ -201,49 +207,90 @@ public class Game extends JFrame implements KeyListener {
 		Agent agent = board.getAgent();
 		return agent.move(treeResult);
 	}
-
-	private boolean explore(List<PossibleChoice> possibleChoices, Result result, Direction direction) {
-		int x = board.getAgent().getX();
-		int y = board.getAgent().getY();
-		boolean resultat = false;
-		switch (direction) {
-			case UP:
-				if (board.getCase(x, y + 1).getWeight().getWeight() > 0) {
-					for (int j = 0; j < 1; j++) {
-						possibleChoices.add(new PossibleChoice(result, direction));
-					}
-					resultat = true;
-				}
-				break;
-			case DOWN:
-				if (board.getCase(x, y - 1).getWeight().getWeight() > 0) {
-					for (int j = 0; j < 1; j++) {
-						possibleChoices.add(new PossibleChoice(result, direction));
-					}
-					resultat = true;
-				}
-				break;
-			case LEFT:
-				if (board.getCase(x - 1, y).getWeight().getWeight() > 0) {
-					for (int j = 0; j < 1; j++) {
-						possibleChoices.add(new PossibleChoice(result, direction));
-					}
-					resultat = true;
-				}
-				break;
-			case RIGHT:
-				if (board.getCase(x + 1, y).getWeight().getWeight() > 0) {
-					for (int j = 0; j < 1; j++) {
-						possibleChoices.add(new PossibleChoice(result, direction));
-					}
-					resultat = true;
-				}
-				break;
-		}
-		return resultat;
-	}
-
-	@Override
+        
+        private boolean verifierSafe(List<PossibleChoice> possibleChoices, Result result, Direction direction){
+            int x = board.getAgent().getX();
+            int y = board.getAgent().getY();
+            boolean resultat = false;
+            switch(direction){
+                case UP: 
+                    if (board.getCase(x, y + 1).getWeight().getWeight() == 0){
+                        for (int j = 0; j < 10; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}
+                        resultat = true;
+                    }
+                break;
+                case DOWN: 
+                    if (board.getCase(x, y - 1).getWeight().getWeight() == 0){
+                        for (int j = 0; j < 10; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}
+                        resultat = true;
+                    }
+                break;
+                case LEFT: 
+                    if (board.getCase(x - 1, y).getWeight().getWeight() == 0){
+                        for (int j = 0; j < 10; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}
+                        resultat = true;
+                    }
+                break;
+                case RIGHT: 
+                    if (board.getCase(x + 1, y).getWeight().getWeight() == 0){
+                        for (int j = 0; j < 10; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}
+                        resultat = true;
+                    }
+                break;
+            }
+            return resultat;
+        }
+        
+        private boolean explore(List<PossibleChoice> possibleChoices, Result result, Direction direction){
+            int x = board.getAgent().getX();
+            int y = board.getAgent().getY();
+            boolean resultat = false;
+            switch(direction){
+                case UP: 
+                    if (board.getCase(x, y + 1).getWeight().getWeight() > 0){
+                        for (int j = 0; j < 4; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}
+                        resultat = true;
+                    }
+                break;
+                case DOWN: 
+                    if (board.getCase(x, y - 1).getWeight().getWeight() > 0){
+                        for (int j = 0; j < 4; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}
+                        resultat = true;
+                    }
+                break;
+                case LEFT: 
+                    if (board.getCase(x - 1, y).getWeight().getWeight() > 0){
+                        for (int j = 0; j < 4; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}    
+                        resultat = true;
+                    }
+                break;
+                case RIGHT: 
+                    if (board.getCase(x + 1, y).getWeight().getWeight() > 0){
+                        for (int j = 0; j < 4; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}
+                        resultat = true;
+                    }
+                break;
+            }
+            return resultat;
+        }
+        
+        @Override
 	public void keyTyped(KeyEvent e) {
 	}
 

@@ -126,8 +126,8 @@ public class Board {
 
 	private int[] getRandomCoordinatesForContent(Content content) {
 		int[] xy = new int[2];
-		xy[0] = Util.randomInt(1, width - 2);
-		xy[1] = Util.randomInt(1, height - 2);
+		xy[0] = Util.randomInt(2, width - 2);
+		xy[1] = Util.randomInt(2, height - 2);
 		if (!getCase(xy[0], xy[1]).canContain(content)) {
 			return getRandomCoordinatesForContent(content);
 		}
