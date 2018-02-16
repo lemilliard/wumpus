@@ -12,7 +12,8 @@ public enum Weight {
     PIT(-4),
     POSSIBLE_PIT_OR_WUMPUS(-5),
     WUMPUS(-6),
-    WALL(-9);
+    VISITED(1),
+    WALL(8);
 
     private int weight;
 

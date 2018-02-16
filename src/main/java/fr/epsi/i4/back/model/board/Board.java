@@ -75,11 +75,16 @@ public class Board {
 				// Ajout des murs
 				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
 					setCaseContent(Content.WALL, x, y);
+                                        setCaseWeight(x, y, Weight.WALL);
 				}
 			}
 		}
 		// Ajout de l'agent
 		setCaseContent(Content.AGENT, 1, 1);
+                
+                // Ajout de l'or
+		addCaseContent(Content.GOLD);
+                
 		// Ajout des puits
 		int count = (int) ((double) pitsPercentage / 100.0d * ((double) (width - 2) * (height - 2)));
 		for (int i = 0; i < count; i++) {
@@ -87,14 +92,13 @@ public class Board {
 		}
 		// Ajout du Wumpus
 		addCaseContent(Content.WUMPUS, Content.STENCH);
-		// Ajout de l'or
-		addCaseContent(Content.GOLD);
 	}
 
 	public void regenerate() {
 		cases = null;
 		agent = new Agent(this);
 		generate();
+                this.agent.updateWeights();
 	}
 
 	public void addCaseContent(Content content, int x, int y) {

@@ -96,6 +96,8 @@ public class Agent {
 		if (x >= 1 && x < board.getWidth() - 1 && y >= 1 && y < board.getHeight() - 1) {
 			board.getCase(this.x, this.y).removeContent(Content.AGENT);
 			board.getCase(x, y).addContent(Content.AGENT);
+                        board.getCase(this.x, this.y).setWeight(VISITED);
+                        board.getCase(x, y).setWeight(SAFE);
 			this.x = x;
 			this.y = y;
 			verifyAlive();
@@ -117,6 +119,7 @@ public class Agent {
 	}
 
 	public void updateWeights() {
+                board.getCase(x, y).setWeight(SAFE);
 		if (board.doesCaseContainsContent(x, y, Content.BREEZE)) {
 			for (Case caseAround : getCasesAround()) {
 				if (board.isCaseAlterable(caseAround)) {
@@ -136,7 +139,11 @@ public class Agent {
 				}
 			}
 		} else {
-			board.setCaseWeight(x, y, SAFE);
+                        for (Case caseAround : getCasesAround()) {
+				if (board.isCaseAlterable(caseAround)) {
+					board.setCaseWeight(caseAround, SAFE);
+				}
+			}
 		}
 	}
 

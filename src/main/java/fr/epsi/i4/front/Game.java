@@ -24,6 +24,10 @@ public class Game extends JFrame {
 	private final Board board;
 
 	private int rounds = 0;
+        
+        private int win = 0;
+        
+        private int death = 0;
 
 	public Game(Board board) {
 		this.board = board;
@@ -79,7 +83,7 @@ public class Game extends JFrame {
 		board.regenerate();
 		refresh();
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -129,13 +133,19 @@ public class Game extends JFrame {
 			if (result != null) {
 				double ratio = result.getRatio();
 				if (result.getValue().equals("Vivant")) {
-					for (int j = 0; j < ((int) ratio * 10); j++) {
+                                    if(!explore(possibleChoices, result, directionsPossibles.get(i))){
+					for (int j = 0; j < (int) (ratio * 10); j++) {
 						possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
 					}
+                                    }
 				} else {
-					for (int j = 0; j < ((1 - (int) ratio) * 10); j++) {
+                                    if (ratio == 1){
+                                        possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                                    } else {
+					for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
 						possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
 					}
+                                    }
 				}
 			}
 			i++;
@@ -178,10 +188,16 @@ public class Game extends JFrame {
 		DecisionTree.save();
 
 		if (!board.getAgent().isAlive()) {
+                        death++;
 			System.out.println("L'agent est décédé...");
+                        System.out.println("compteur de mort = " + death);
+                        System.out.println("compteur de win = " + win);
 			reset();
 		} else if (board.getAgent().hasGold()) {
+                        win++;
 			System.out.println("L'agent a récupéré l'or!!");
+                        System.out.println("compteur de mort = " + death);
+                        System.out.println("compteur de win = " + win);
 			reset();
 		}
 	}
@@ -198,4 +214,45 @@ public class Game extends JFrame {
 		Agent agent = board.getAgent();
 		return agent.move(treeResult);
 	}
+        
+        private boolean explore(List<PossibleChoice> possibleChoices, Result result, Direction direction){
+            int x = board.getAgent().getX();
+            int y = board.getAgent().getY();
+            boolean resultat = false;
+            switch(direction){
+                case UP: 
+                    if (board.getCase(x, y + 1).getWeight().getWeight() > 0){
+                        for (int j = 0; j < 1; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}
+                        resultat = true;
+                    }
+                break;
+                case DOWN: 
+                    if (board.getCase(x, y - 1).getWeight().getWeight() > 0){
+                        for (int j = 0; j < 1; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}
+                        resultat = true;
+                    }
+                break;
+                case LEFT: 
+                    if (board.getCase(x - 1, y).getWeight().getWeight() > 0){
+                        for (int j = 0; j < 1; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}    
+                        resultat = true;
+                    }
+                break;
+                case RIGHT: 
+                    if (board.getCase(x + 1, y).getWeight().getWeight() > 0){
+                        for (int j = 0; j < 1; j++) {
+                            possibleChoices.add(new PossibleChoice(result, direction));
+			}
+                        resultat = true;
+                    }
+                break;
+            }
+            return resultat;
+        }
 }
