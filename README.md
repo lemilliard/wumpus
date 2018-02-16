@@ -2,10 +2,26 @@
 
 ## Installation
 
-Pour pouvoir tester le programme, il faut d'abord installer la librairie DecisionTree disponible ici:
-https://github.com/LeMilliard/DecisionTree
+Pour pouvoir tester le programme, il faut d'abord ajouter les lignes suivantes dans le fichier ```~/.m2/settings.xml```:
 
-Suivez les instructions d'installation dans le README, puis faites un import Maven sur ce projet.
+```xml
+<profiles>
+    <!-- Autres profils -->
+    <profile>
+        <id>thomaskintRepoRead</id>
+        <activation>
+            <property>
+                <name>!doNotUseThomaskintRepoRead</name>
+            </property>
+        </activation>
+        <properties>
+            <thomaskintRepoReadUrl>https://mymavenrepo.com/repo/8dzidBypsUURgH2LcpWV/</thomaskintRepoReadUrl>
+        </properties>
+    </profile>
+</profiles>
+```
+
+Faites un import Maven sur ce projet.
 
 Lancez le programme.
 
