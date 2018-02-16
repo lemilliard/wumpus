@@ -2,7 +2,9 @@ package fr.epsi.i4.front;
 
 import fr.decisiontree.Config;
 import fr.decisiontree.DecisionTree;
+import fr.decisiontree.model.Result;
 import fr.epsi.i4.back.model.Agent;
+import fr.epsi.i4.back.model.PossibleChoice;
 import fr.epsi.i4.back.model.board.Board;
 import fr.epsi.i4.back.model.board.Case;
 import fr.epsi.i4.back.model.board.Direction;
@@ -18,14 +20,6 @@ import static fr.epsi.i4.back.model.board.content.Weight.SAFE;
 public class Game extends JFrame {
 
 	public static final int caseSize = 100;
-
-	private static final String GAUCHE = "Gauche";
-
-	private static final String DROITE = "Droite";
-
-	private static final String HAUT = "Haut";
-
-	private static final String BAS = "Bas";
 
 	private final Board board;
 
@@ -48,11 +42,11 @@ public class Game extends JFrame {
 	private void initDecisionTree() {
 		Config config = new Config("./decisionTree");
 		config.addAttribut("Actuelle", Weight.getNames());
-		config.addAttribut(GAUCHE, Weight.getNames());
-		config.addAttribut(DROITE, Weight.getNames());
-		config.addAttribut(HAUT, Weight.getNames());
-		config.addAttribut(BAS, Weight.getNames());
-		config.addAttribut("Direction", GAUCHE, DROITE, HAUT, BAS);
+		config.addAttribut(Direction.LEFT.name(), Weight.getNames());
+		config.addAttribut(Direction.RIGHT.name(), Weight.getNames());
+		config.addAttribut(Direction.UP.name(), Weight.getNames());
+		config.addAttribut(Direction.DOWN.name(), Weight.getNames());
+		config.addAttribut("Direction", Direction.LEFT.name(), Direction.RIGHT.name(), Direction.UP.name(), Direction.DOWN.name());
 
 		config.addDecision("Vivant");
 		config.addDecision("Mort");
@@ -98,24 +92,28 @@ public class Game extends JFrame {
 		Case[] casesAround = board.getAgent().getCasesAround();
 
 		// Défini les directions possibles
-		List<String> directionsPossibles = new ArrayList<>();
+		List<Direction> directionsPossibles = new ArrayList<>();
 		if (board.getAgent().getX() > 1) {
-			directionsPossibles.add(GAUCHE);
+			directionsPossibles.add(Direction.LEFT);
 		}
 		if (board.getAgent().getX() < board.getWidth() - 2) {
-			directionsPossibles.add(DROITE);
+			directionsPossibles.add(Direction.RIGHT);
 		}
 		if (board.getAgent().getY() < board.getHeight() - 2) {
-			directionsPossibles.add(HAUT);
+			directionsPossibles.add(Direction.UP);
 		}
 		if (board.getAgent().getY() > 1) {
-			directionsPossibles.add(BAS);
+			directionsPossibles.add(Direction.DOWN);
+		}
+
+		if (board.getAgent().getBackCounter() > 0) {
+			directionsPossibles.remove(board.getAgent().getDirection().getOpposite());
 		}
 
 		// Utiliser l'arbre de décision
 		String[] tmpEntry;
-		String tmpDecision;
-		List<String> possibleChoices = new ArrayList<>();
+		Result result;
+		List<PossibleChoice> possibleChoices = new ArrayList<>();
 		int i = 0;
 		while (i < directionsPossibles.size()) {
 			tmpEntry = new String[]{
@@ -124,29 +122,39 @@ public class Game extends JFrame {
 					casesAround[1].getWeight().name(),
 					casesAround[2].getWeight().name(),
 					casesAround[3].getWeight().name(),
-					directionsPossibles.get(i),
+					directionsPossibles.get(i).name(),
 					null
 			};
-			tmpDecision = DecisionTree.decide(tmpEntry);
-			if (tmpDecision != null && tmpDecision.equals("Vivant")) {
-				possibleChoices.add(directionsPossibles.get(i));
+			result = DecisionTree.decide(tmpEntry);
+			if (result != null) {
+				double ratio = result.getRatio();
+				if (result.getValue().equals("Vivant")) {
+					for (int j = 0; j < ((int) ratio * 10); j++) {
+						possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+					}
+				} else {
+					for (int j = 0; j < ((1 - (int) ratio) * 10); j++) {
+						possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+					}
+				}
 			}
 			i++;
 		}
 
-		if (possibleChoices.isEmpty()) {
-			possibleChoices.add(directionsPossibles.get(Util.randomInt(0, directionsPossibles.size() - 1)));
-		}
-
 		// Process result
-		String choice = possibleChoices.get(Util.randomInt(0, possibleChoices.size() - 1));
+		Direction choice;
+		if (possibleChoices.isEmpty()) {
+			choice = directionsPossibles.get(Util.randomInt(0, directionsPossibles.size() - 1));
+		} else {
+			choice = possibleChoices.get(Util.randomInt(0, possibleChoices.size() - 1)).getChoice();
+		}
 		tmpEntry = new String[]{
 				board.getAgentCase().getWeight().name(),
 				casesAround[0].getWeight().name(),
 				casesAround[1].getWeight().name(),
 				casesAround[2].getWeight().name(),
 				casesAround[3].getWeight().name(),
-				choice,
+				choice.name(),
 				null
 		};
 
@@ -178,27 +186,16 @@ public class Game extends JFrame {
 		}
 	}
 
+	private Result processResult(List<Result> possibleChoices) {
+		return null;
+	}
+
 	public void refresh() {
 		getGame().refresh();
 	}
 
-	private int processTreeResult(String treeResult) {
+	private int processTreeResult(Direction treeResult) {
 		Agent agent = board.getAgent();
-		int toursUtilises = 0;
-		switch (treeResult) {
-			case GAUCHE:
-				toursUtilises = agent.move(Direction.LEFT);
-				break;
-			case DROITE:
-				toursUtilises = agent.move(Direction.RIGHT);
-				break;
-			case HAUT:
-				toursUtilises = agent.move(Direction.UP);
-				break;
-			case BAS:
-				toursUtilises = agent.move(Direction.DOWN);
-				break;
-		}
-		return toursUtilises;
+		return agent.move(treeResult);
 	}
 }

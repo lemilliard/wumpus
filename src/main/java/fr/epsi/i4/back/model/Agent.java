@@ -21,6 +21,8 @@ public class Agent {
 
 	private Direction direction;
 
+	private int backCounter;
+
 	public Agent(Board board) {
 		this.board = board;
 		this.x = 1;
@@ -32,12 +34,28 @@ public class Agent {
 		return alive;
 	}
 
+	public boolean hasGold() {
+		return hasGold;
+	}
+
 	public int getX() {
 		return x;
 	}
 
 	public int getY() {
 		return y;
+	}
+
+	public int getBackCounter() {
+		return backCounter;
+	}
+
+	public Board getBoard() {
+		return board;
+	}
+
+	public Direction getDirection() {
+		return direction;
 	}
 
 	public int move(Direction direction) {
@@ -66,6 +84,11 @@ public class Agent {
 				move(x + 1, y);
 				break;
 		}
+		if (toursUtilises == 3) {
+			backCounter++;
+		} else {
+			backCounter = 0;
+		}
 		return toursUtilises;
 	}
 
@@ -91,10 +114,6 @@ public class Agent {
 		if (board.getCase(x, y).containsContent(Content.GOLD)) {
 			hasGold = true;
 		}
-	}
-
-	public boolean hasGold() {
-		return hasGold;
 	}
 
 	public void updateWeights() {
