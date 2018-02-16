@@ -24,8 +24,6 @@ public class FrontGame extends JPanel {
 			for (int x = 0; x < board.getWidth(); x++) {
 				FrontCase frontCase = new FrontCase(board.getCase(x, y));
 				add(frontCase);
-				//				frontCase.validate();
-				//				frontCase.repaint();
 			}
 		}
 		validate();
