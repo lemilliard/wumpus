@@ -87,6 +87,7 @@ public class Game extends JFrame implements KeyListener {
 	}
 
 	public void reset() {
+		displayResult();
 		System.out.println("------------------------");
 		System.out.println("New Game");
 		System.out.println("------------------------");
@@ -144,24 +145,24 @@ public class Game extends JFrame implements KeyListener {
 			if (result != null) {
 				double ratio = result.getRatio();
 				if (result.getValue().equals("Vivant")) {
-                                    if(!explore(possibleChoices, result, directionsPossibles.get(i))){
-                                        if(!verifierSafe(possibleChoices, result, directionsPossibles.get(i))){
-                                            for (int j = 0; j < (int) (ratio * 10); j++) {
-                                            	possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-                                            }
-                                        }
-                                    }
+					if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
+						if (!verifierSafe(possibleChoices, result, directionsPossibles.get(i))) {
+							for (int j = 0; j < (int) (ratio * 10); j++) {
+								possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+							}
+						}
+					}
 				} else {
 //                                    if (ratio == 1){
 //                                        possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
 //                                    } else {
-                                    if(!explore(possibleChoices, result, directionsPossibles.get(i))){
-                                        if(!verifierSafe(possibleChoices, result, directionsPossibles.get(i))){
-                                            for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
-                                            	possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-                                            }   
-                                        }
-                                    }
+					if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
+						if (!verifierSafe(possibleChoices, result, directionsPossibles.get(i))) {
+							for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
+								possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+							}
+						}
+					}
 //                                    }
 				}
 			}
@@ -207,90 +208,90 @@ public class Game extends JFrame implements KeyListener {
 		Agent agent = board.getAgent();
 		return agent.move(treeResult);
 	}
-        
-        private boolean verifierSafe(List<PossibleChoice> possibleChoices, Result result, Direction direction){
-            int x = board.getAgent().getX();
-            int y = board.getAgent().getY();
-            boolean resultat = false;
-            switch(direction){
-                case UP: 
-                    if (board.getCase(x, y + 1).getWeight().getWeight() == 0){
-                        for (int j = 0; j < 10; j++) {
-                            possibleChoices.add(new PossibleChoice(result, direction));
-			}
-                        resultat = true;
-                    }
-                break;
-                case DOWN: 
-                    if (board.getCase(x, y - 1).getWeight().getWeight() == 0){
-                        for (int j = 0; j < 10; j++) {
-                            possibleChoices.add(new PossibleChoice(result, direction));
-			}
-                        resultat = true;
-                    }
-                break;
-                case LEFT: 
-                    if (board.getCase(x - 1, y).getWeight().getWeight() == 0){
-                        for (int j = 0; j < 10; j++) {
-                            possibleChoices.add(new PossibleChoice(result, direction));
-			}
-                        resultat = true;
-                    }
-                break;
-                case RIGHT: 
-                    if (board.getCase(x + 1, y).getWeight().getWeight() == 0){
-                        for (int j = 0; j < 10; j++) {
-                            possibleChoices.add(new PossibleChoice(result, direction));
-			}
-                        resultat = true;
-                    }
-                break;
-            }
-            return resultat;
-        }
-        
-        private boolean explore(List<PossibleChoice> possibleChoices, Result result, Direction direction){
-            int x = board.getAgent().getX();
-            int y = board.getAgent().getY();
-            boolean resultat = false;
-            switch(direction){
-                case UP: 
-                    if (board.getCase(x, y + 1).getWeight().getWeight() > 0){
-                        for (int j = 0; j < 4; j++) {
-                            possibleChoices.add(new PossibleChoice(result, direction));
-			}
-                        resultat = true;
-                    }
-                break;
-                case DOWN: 
-                    if (board.getCase(x, y - 1).getWeight().getWeight() > 0){
-                        for (int j = 0; j < 4; j++) {
-                            possibleChoices.add(new PossibleChoice(result, direction));
-			}
-                        resultat = true;
-                    }
-                break;
-                case LEFT: 
-                    if (board.getCase(x - 1, y).getWeight().getWeight() > 0){
-                        for (int j = 0; j < 4; j++) {
-                            possibleChoices.add(new PossibleChoice(result, direction));
-			}    
-                        resultat = true;
-                    }
-                break;
-                case RIGHT: 
-                    if (board.getCase(x + 1, y).getWeight().getWeight() > 0){
-                        for (int j = 0; j < 4; j++) {
-                            possibleChoices.add(new PossibleChoice(result, direction));
-			}
-                        resultat = true;
-                    }
-                break;
-            }
-            return resultat;
-        }
-        
-        @Override
+
+	private boolean verifierSafe(List<PossibleChoice> possibleChoices, Result result, Direction direction) {
+		int x = board.getAgent().getX();
+		int y = board.getAgent().getY();
+		boolean resultat = false;
+		switch (direction) {
+			case UP:
+				if (board.getCase(x, y + 1).getWeight().getWeight() == 0) {
+					for (int j = 0; j < 10; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					resultat = true;
+				}
+				break;
+			case DOWN:
+				if (board.getCase(x, y - 1).getWeight().getWeight() == 0) {
+					for (int j = 0; j < 10; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					resultat = true;
+				}
+				break;
+			case LEFT:
+				if (board.getCase(x - 1, y).getWeight().getWeight() == 0) {
+					for (int j = 0; j < 10; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					resultat = true;
+				}
+				break;
+			case RIGHT:
+				if (board.getCase(x + 1, y).getWeight().getWeight() == 0) {
+					for (int j = 0; j < 10; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					resultat = true;
+				}
+				break;
+		}
+		return resultat;
+	}
+
+	private boolean explore(List<PossibleChoice> possibleChoices, Result result, Direction direction) {
+		int x = board.getAgent().getX();
+		int y = board.getAgent().getY();
+		boolean resultat = false;
+		switch (direction) {
+			case UP:
+				if (board.getCase(x, y + 1).getWeight().getWeight() > 0) {
+					for (int j = 0; j < 4; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					resultat = true;
+				}
+				break;
+			case DOWN:
+				if (board.getCase(x, y - 1).getWeight().getWeight() > 0) {
+					for (int j = 0; j < 4; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					resultat = true;
+				}
+				break;
+			case LEFT:
+				if (board.getCase(x - 1, y).getWeight().getWeight() > 0) {
+					for (int j = 0; j < 4; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					resultat = true;
+				}
+				break;
+			case RIGHT:
+				if (board.getCase(x + 1, y).getWeight().getWeight() > 0) {
+					for (int j = 0; j < 4; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					resultat = true;
+				}
+				break;
+		}
+		return resultat;
+	}
+
+	@Override
 	public void keyTyped(KeyEvent e) {
 	}
 
@@ -361,15 +362,19 @@ public class Game extends JFrame implements KeyListener {
 		if (!board.getAgent().isAlive()) {
 			death++;
 			System.out.println("L'agent est décédé...");
-			System.out.println("compteur de mort = " + death);
-			System.out.println("compteur de win = " + win);
 			reset();
 		} else if (board.getAgent().hasGold()) {
 			win++;
 			System.out.println("L'agent a récupéré l'or!!");
-			System.out.println("compteur de mort = " + death);
-			System.out.println("compteur de win = " + win);
 			reset();
 		}
+	}
+
+	private void displayResult() {
+		System.out.println("Nombre de morts: " + death);
+		System.out.println("Nombre de victoires: " + win);
+		System.out.println("Nombre de parties: " + (win + death));
+		float winRate = (float) win / (float) (win + death) * 100.0f;
+		System.out.println("Pourcentage de victoire: " + winRate + "%");
 	}
 }
