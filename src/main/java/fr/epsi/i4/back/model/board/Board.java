@@ -2,6 +2,7 @@ package fr.epsi.i4.back.model.board;
 
 import fr.epsi.i4.back.model.Agent;
 import fr.epsi.i4.back.model.board.content.Content;
+import fr.epsi.i4.back.model.board.content.Gold;
 import fr.epsi.i4.back.model.board.content.Weight;
 import fr.epsi.i4.util.Randomizer;
 
@@ -23,6 +24,8 @@ public class Board {
 	private Agent agent;
 
 	private Randomizer randomizer;
+
+	private Gold gold;
 
 	public Board(int width, int height, int pitsPercentage) {
 		this.width = width + 2;
@@ -49,8 +52,11 @@ public class Board {
 		return agent;
 	}
 
-	@Override
-	public String toString() {
+	public Gold getGold(){
+	    return gold;
+    }
+
+	@Override public String toString() {
 		String str = "";
 
 		for (int y = cases.length - 1; y > -1; y--) {
