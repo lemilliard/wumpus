@@ -105,6 +105,10 @@ public class Board {
 		return getCase(agent.getX(), agent.getY());
 	}
 
+	public Case getGoldCase() {
+		return getCase(gold.getGoldX(), gold.getGoldY());
+	}
+
 	public void generate() {
 		cases = new Case[height][width];
 		for (int y = 0; y < height; y++) {

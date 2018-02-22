@@ -2,27 +2,29 @@ package fr.epsi.i4.optimizedWay;
 
 import fr.epsi.i4.back.model.Agent;
 import fr.epsi.i4.back.model.board.Board;
-import fr.epsi.i4.back.model.board.content.Agent;
+import fr.epsi.i4.back.model.board.Direction;
+import fr.epsi.i4.back.model.board.content.Gold;
 
 public class Dijkstra {
 
     private final Board board;
-    private final fr.epsi.i4.back.model.Agent agent;
+    private final Agent agent;
 
     public Dijkstra(Board board) {
         this.board = board;
-        this.agent = agent;
+        this.agent = new Agent(board);
     }
 
     public int comparison() {
         int toursUtilisés;
-        fr.epsi.i4.back.model.Agent myAgent = new fr.epsi.i4.back.model.Agent(board);
-        fr.epsi.i4.back.model.board.content.Agent myAgent2= new fr.epsi.i4.back.model.board.content.Agent(agent);
 
-        if (myAgent2.getPosition() < myAgent2.){
-            myAgent.move(up);
-        }else if (myAgent < myAgent){
-            move(right);
+        Agent myAgent = new Agent(board);
+        Gold myGold = new Gold(board);
+
+        if (myAgent.getY() < myGold.getGoldY()){
+            myAgent.move(Direction.UP);
+        }else if (myAgent.getX() < myGold.getGoldX()){
+            myAgent.move(Direction.RIGHT);
         }
         return toursUtilisés;
     }

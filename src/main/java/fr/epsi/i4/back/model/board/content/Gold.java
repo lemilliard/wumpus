@@ -5,14 +5,36 @@
  */
 package fr.epsi.i4.back.model.board.content;
 
+import fr.epsi.i4.back.model.board.Board;
+
 /**
  *
  * @author cesar
  */
 @Deprecated
 public class Gold extends IContent {
+
+    private int x;
+
+    private int y;
+
+    private Board board;
+
+    public Gold(Board board) {
+        this.board = board;
+        this.x = 1;
+        this.y = 1;
+    }
     
-    public Gold(){
-        super(9);
+    public int getGoldX() {
+        return x;
+    }
+
+    public int getGoldY() {
+        return y;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 }
