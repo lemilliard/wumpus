@@ -16,7 +16,7 @@ public class Dijkstra {
     }
 
     public int comparison() {
-        int toursUtilisés;
+        int toursUtilises = 0;
 
         Agent myAgent = new Agent(board);
         Gold myGold = new Gold(board);
@@ -26,6 +26,6 @@ public class Dijkstra {
         }else if (myAgent.getX() < myGold.getGoldX()){
             myAgent.move(Direction.RIGHT);
         }
-        return toursUtilisés;
+        return toursUtilises;
     }
 }
