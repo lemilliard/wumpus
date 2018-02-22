@@ -9,6 +9,7 @@ import fr.epsi.i4.back.model.PossibleChoice;
 import fr.epsi.i4.back.model.board.Board;
 import fr.epsi.i4.back.model.board.Case;
 import fr.epsi.i4.back.model.board.Direction;
+import fr.epsi.i4.back.model.board.content.Content;
 import fr.epsi.i4.back.model.board.content.Weight;
 import fr.epsi.i4.util.Util;
 
@@ -54,12 +55,22 @@ public class Game extends JFrame implements KeyListener {
 
 	private void initDecisionTree() {
 		Config config = new Config("./decisionTree");
-		config.addAttribut("Actuelle", Weight.getNames());
-		config.addAttribut(LEFT.name(), Weight.getNames());
-		config.addAttribut(RIGHT.name(), Weight.getNames());
-		config.addAttribut(UP.name(), Weight.getNames());
-		config.addAttribut(Direction.DOWN.name(), Weight.getNames());
-		config.addAttribut("Direction", LEFT.name(), RIGHT.name(), UP.name(), Direction.DOWN.name());
+//		config.addAttribut("Actuelle", Weight.getNames());
+		String[] params = new String[] {
+				Weight.SAFE.name(),
+				Weight.DEFAULT.name(),
+				Weight.POSSIBLE_PIT.name(),
+				Weight.POSSIBLE_WUMPUS.name(),
+				Weight.PIT.name(),
+				Weight.POSSIBLE_PIT_OR_WUMPUS.name(),
+				Weight.WUMPUS.name(),
+				Weight.VISITED.name()
+		};
+		config.addAttribut(LEFT.name(), params);
+		config.addAttribut(RIGHT.name(), params);
+		config.addAttribut(UP.name(), params);
+		config.addAttribut(DOWN.name(), params);
+		config.addAttribut("Direction", LEFT.name(), RIGHT.name(), UP.name(), DOWN.name());
 
 		config.addDecision("Vivant");
 		config.addDecision("Mort");
@@ -112,10 +123,10 @@ public class Game extends JFrame implements KeyListener {
 		if (board.getAgent().getX() > 1) {
 			directionsPossibles.add(LEFT);
 		}
-		if (board.getAgent().getX() < board.getWidth() - 2) {
+		if (!board.getAgent().getCasesAround()[1].getWeight().equals(Weight.WALL)) {
 			directionsPossibles.add(RIGHT);
 		}
-		if (board.getAgent().getY() < board.getHeight() - 2) {
+		if (!board.getAgent().getCasesAround()[3].getWeight().equals(Weight.WALL)) {
 			directionsPossibles.add(UP);
 		}
 		if (board.getAgent().getY() > 1) {
@@ -127,20 +138,20 @@ public class Game extends JFrame implements KeyListener {
 		}
 
 		// Utiliser l'arbre de décision
-		String[] entry;
+		String[] entry = new String[6];
 		Result result;
 		List<PossibleChoice> possibleChoices = new ArrayList<>();
 		int i = 0;
 		while (i < directionsPossibles.size()) {
-			entry = new String[]{
-					board.getAgentCase().getWeight().name(),
-					casesAround[0].getWeight().name(),
-					casesAround[1].getWeight().name(),
-					casesAround[2].getWeight().name(),
-					casesAround[3].getWeight().name(),
-					directionsPossibles.get(i).name(),
-					null
-			};
+			for (int j = 0; j < 4; j++) {
+				if (casesAround[j].getWeight().equals(Weight.WALL)) {
+					entry[j] = null;
+				} else {
+					entry[j] = casesAround[j].getWeight().name();
+				}
+			}
+			entry[4] = directionsPossibles.get(i).name();
+			entry[5] = null;
 			result = DecisionTree.decide(entry);
 			if (result != null) {
 				double ratio = result.getRatio();
@@ -176,15 +187,15 @@ public class Game extends JFrame implements KeyListener {
 		} else {
 			choice = possibleChoices.get(Util.randomInt(0, possibleChoices.size() - 1)).getChoice();
 		}
-		entry = new String[]{
-				board.getAgentCase().getWeight().name(),
-				casesAround[0].getWeight().name(),
-				casesAround[1].getWeight().name(),
-				casesAround[2].getWeight().name(),
-				casesAround[3].getWeight().name(),
-				choice.name(),
-				null
-		};
+		for (int j = 0; j < 4; j++) {
+			if (casesAround[j].getWeight().equals(Weight.WALL)) {
+				entry[j] = null;
+			} else {
+				entry[j] = casesAround[j].getWeight().name();
+			}
+		}
+		entry[4] = choice.name();
+		entry[5] = null;
 
 		// Incrémente les tours et process result
 		rounds += processTreeResult(choice);
@@ -257,7 +268,7 @@ public class Game extends JFrame implements KeyListener {
 		switch (direction) {
 			case UP:
 				if (board.getCase(x, y + 1).getWeight().getWeight() > 0) {
-					for (int j = 0; j < 4; j++) {
+					for (int j = 0; j < 1; j++) {
 						possibleChoices.add(new PossibleChoice(result, direction));
 					}
 					resultat = true;
@@ -265,7 +276,7 @@ public class Game extends JFrame implements KeyListener {
 				break;
 			case DOWN:
 				if (board.getCase(x, y - 1).getWeight().getWeight() > 0) {
-					for (int j = 0; j < 4; j++) {
+					for (int j = 0; j < 1; j++) {
 						possibleChoices.add(new PossibleChoice(result, direction));
 					}
 					resultat = true;
@@ -273,7 +284,7 @@ public class Game extends JFrame implements KeyListener {
 				break;
 			case LEFT:
 				if (board.getCase(x - 1, y).getWeight().getWeight() > 0) {
-					for (int j = 0; j < 4; j++) {
+					for (int j = 0; j < 1; j++) {
 						possibleChoices.add(new PossibleChoice(result, direction));
 					}
 					resultat = true;
@@ -281,7 +292,7 @@ public class Game extends JFrame implements KeyListener {
 				break;
 			case RIGHT:
 				if (board.getCase(x + 1, y).getWeight().getWeight() > 0) {
-					for (int j = 0; j < 4; j++) {
+					for (int j = 0; j < 1; j++) {
 						possibleChoices.add(new PossibleChoice(result, direction));
 					}
 					resultat = true;
@@ -350,9 +361,9 @@ public class Game extends JFrame implements KeyListener {
 		System.out.println("Tour " + rounds);
 
 		if (board.getAgent().isAlive()) {
-			entry[6] = "Vivant";
+			entry[5] = "Vivant";
 		} else {
-			entry[6] = "Mort";
+			entry[5] = "Mort";
 		}
 		DecisionTree.addData(entry);
 		DecisionTree.regenerateTree();

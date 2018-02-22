@@ -4,12 +4,12 @@ import java.io.File;
 
 public enum FrontContent {
 	WALL("wall.jpg"), //
-	AGENT("agent.png"), //
+	AGENT("jambon.png"), //
 	GOLD("gold.png"), //
 	PIT("pit.png"), //
 	WUMPUS("wumpus.png"), //
 	BREEZE("breeze.png"), //
-	STENCH("mouche.jpg");
+	STENCH("mouche.png");
 
 	private static final String filePath = "./img/";
 

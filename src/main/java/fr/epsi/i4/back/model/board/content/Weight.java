@@ -4,7 +4,6 @@ package fr.epsi.i4.back.model.board.content;
  * Created by tkint on 17/12/2017.
  */
 public enum Weight {
-    GOLD(9),
     SAFE(0),
     DEFAULT(-1),
     POSSIBLE_PIT(-2),
