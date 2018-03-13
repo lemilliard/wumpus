@@ -9,7 +9,6 @@ import fr.epsi.i4.back.model.PossibleChoice;
 import fr.epsi.i4.back.model.board.Board;
 import fr.epsi.i4.back.model.board.Case;
 import fr.epsi.i4.back.model.board.Direction;
-import fr.epsi.i4.back.model.board.content.Content;
 import fr.epsi.i4.back.model.board.content.Weight;
 import fr.epsi.i4.util.Util;
 
@@ -17,7 +16,9 @@ import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static fr.epsi.i4.back.model.board.Direction.*;
 
@@ -56,7 +57,7 @@ public class Game extends JFrame implements KeyListener {
 	private void initDecisionTree() {
 		Config config = new Config("./decisionTree");
 //		config.addAttribut("Actuelle", Weight.getNames());
-		String[] params = new String[] {
+		String[] params = new String[]{
 				Weight.SAFE.name(),
 				Weight.DEFAULT.name(),
 				Weight.POSSIBLE_PIT.name(),
@@ -137,22 +138,22 @@ public class Game extends JFrame implements KeyListener {
 			directionsPossibles.remove(board.getAgent().getDirection().getOpposite());
 		}
 
+		// Initialisation de l'entry
+		HashMap<String, String> entry = new HashMap<>();
+		for (int j = 0; j < 4; j++) {
+			if (!casesAround[j].getWeight().equals(Weight.WALL)) {
+				entry.put(Direction.getByIndex(j).name(), casesAround[j].getWeight().name());
+			}
+		}
+
 		// Utiliser l'arbre de décision
-		String[] entry = new String[6];
 		Result result;
 		List<PossibleChoice> possibleChoices = new ArrayList<>();
 		int i = 0;
 		while (i < directionsPossibles.size()) {
-			for (int j = 0; j < 4; j++) {
-				if (casesAround[j].getWeight().equals(Weight.WALL)) {
-					entry[j] = null;
-				} else {
-					entry[j] = casesAround[j].getWeight().name();
-				}
-			}
-			entry[4] = directionsPossibles.get(i).name();
-			entry[5] = null;
+			entry.put("Direction", directionsPossibles.get(i).name());
 			result = DecisionTree.decide(entry);
+			// Gestion du ratio
 			if (result != null) {
 				double ratio = result.getRatio();
 				if (result.getValue().equals("Vivant")) {
@@ -164,9 +165,6 @@ public class Game extends JFrame implements KeyListener {
 						}
 					}
 				} else {
-//                                    if (ratio == 1){
-//                                        possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-//                                    } else {
 					if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
 						if (!verifierSafe(possibleChoices, result, directionsPossibles.get(i))) {
 							for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
@@ -174,9 +172,9 @@ public class Game extends JFrame implements KeyListener {
 							}
 						}
 					}
-//                                    }
 				}
 			}
+			entry.remove("Direction");
 			i++;
 		}
 
@@ -187,15 +185,7 @@ public class Game extends JFrame implements KeyListener {
 		} else {
 			choice = possibleChoices.get(Util.randomInt(0, possibleChoices.size() - 1)).getChoice();
 		}
-		for (int j = 0; j < 4; j++) {
-			if (casesAround[j].getWeight().equals(Weight.WALL)) {
-				entry[j] = null;
-			} else {
-				entry[j] = casesAround[j].getWeight().name();
-			}
-		}
-		entry[4] = choice.name();
-		entry[5] = null;
+		entry.put("Direction", choice.name());
 
 		// Incrémente les tours et process result
 		rounds += processTreeResult(choice);
@@ -312,61 +302,61 @@ public class Game extends JFrame implements KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (mode.equals(Mode.MANUAL)) {
-			Direction direction = null;
-			switch (e.getKeyCode()) {
-				case 37:
-					direction = LEFT;
-					break;
-				case 39:
-					direction = RIGHT;
-					break;
-				case 38:
-					direction = UP;
-					break;
-				case 40:
-					direction = DOWN;
-					break;
-			}
-			if (direction != null) {
-				// Cases autour de l'agent
-				Case[] casesAround = board.getAgent().getCasesAround();
-
-				// Ajout de l'entry dans l'arbre
-				String[] entry = new String[]{
-						board.getAgentCase().getWeight().name(),
-						casesAround[0].getWeight().name(),
-						casesAround[1].getWeight().name(),
-						casesAround[2].getWeight().name(),
-						casesAround[3].getWeight().name(),
-						direction.name(),
-						null
-				};
-
-				// Déplacement
-				rounds += processTreeResult(direction);
-
-				// Mise à jour de l'affichage
-				refresh();
-
-				// Mise à jour de l'état du jeu
-				updateGameState(entry);
-			}
-			e.consume();
-		}
+//		if (mode.equals(Mode.MANUAL)) {
+//			Direction direction = null;
+//			switch (e.getKeyCode()) {
+//				case 37:
+//					direction = LEFT;
+//					break;
+//				case 39:
+//					direction = RIGHT;
+//					break;
+//				case 38:
+//					direction = UP;
+//					break;
+//				case 40:
+//					direction = DOWN;
+//					break;
+//			}
+//			if (direction != null) {
+//				// Cases autour de l'agent
+//				Case[] casesAround = board.getAgent().getCasesAround();
+//
+//				// Ajout de l'entry dans l'arbre
+//				String[] entry = new String[]{
+//						board.getAgentCase().getWeight().name(),
+//						casesAround[0].getWeight().name(),
+//						casesAround[1].getWeight().name(),
+//						casesAround[2].getWeight().name(),
+//						casesAround[3].getWeight().name(),
+//						direction.name(),
+//						null
+//				};
+//
+//				// Déplacement
+//				rounds += processTreeResult(direction);
+//
+//				// Mise à jour de l'affichage
+//				refresh();
+//
+//				// Mise à jour de l'état du jeu
+//				updateGameState(entry);
+//			}
+//			e.consume();
+//		}
 	}
 
-	private void updateGameState(String[] entry) {
+	private void updateGameState(HashMap<String, String> entry) {
 		// Vérifie l'état du jeu
 		System.out.println("Tour " + rounds);
 
+		int result;
 		if (board.getAgent().isAlive()) {
-			entry[5] = "Vivant";
+			result = 0;
 		} else {
-			entry[5] = "Mort";
+			result = 1;
 		}
-		DecisionTree.addData(entry);
-		DecisionTree.regenerateTree();
+		DecisionTree.addData(entry, result);
 		DecisionTree.print();
 		DecisionTree.save();
 

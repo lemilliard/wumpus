@@ -1,7 +1,7 @@
 package fr.epsi.i4.back.model.board;
 
 public enum Direction {
-	UP, DOWN(UP), LEFT, RIGHT(LEFT);
+	LEFT, RIGHT(LEFT), UP, DOWN(UP);
 
 	private Direction opposite;
 
@@ -25,5 +25,17 @@ public enum Direction {
 			}
 		}
 		return opposite;
+	}
+
+	public static Direction getByIndex(int index) {
+		Direction direction = null;
+		int i = 0;
+		while (i < values().length && direction == null) {
+			if (i == index) {
+				direction = values()[i];
+			}
+			i++;
+		}
+		return direction;
 	}
 }
