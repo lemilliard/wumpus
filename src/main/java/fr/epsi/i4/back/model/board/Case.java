@@ -12,8 +12,14 @@ public class Case {
 
 	private Content[] contents;
 
-	public Case() {
+	private int x;
+
+	private int y;
+
+	public Case(int x, int y) {
 		this.weight = Weight.DEFAULT;
+		this.x = x;
+		this.y = y;
 		empty();
 	}
 
@@ -112,5 +118,13 @@ public class Case {
 
 	public int calculateSafety() {
 		return 0;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
 	}
 }

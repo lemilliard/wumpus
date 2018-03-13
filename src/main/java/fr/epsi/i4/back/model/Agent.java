@@ -5,6 +5,8 @@ import fr.epsi.i4.back.model.board.Case;
 import fr.epsi.i4.back.model.board.Direction;
 import fr.epsi.i4.back.model.board.content.Content;
 
+import java.util.List;
+
 import static fr.epsi.i4.back.model.board.content.Weight.*;
 
 public class Agent {
@@ -119,7 +121,6 @@ public class Agent {
 	}
 
 	public void updateWeights() {
-		board.getCase(x, y).setWeight(SAFE);
 		if (board.doesCaseContainsContent(x, y, Content.BREEZE)) {
 			for (Case caseAround : getCasesAround()) {
 				if (board.isCaseAlterable(caseAround)) {
@@ -145,9 +146,46 @@ public class Agent {
 				}
 			}
 		}
+		for (Case caseAround : getCasesAround()) {
+			updateWeightsOfCasesAroundCase(caseAround);
+		}
 	}
 
-	public Case[] getCasesAround() {
-		return new Case[]{board.getCase(x - 1, y), board.getCase(x + 1, y), board.getCase(x, y - 1), board.getCase(x, y + 1)};
+	private void updateWeightsOfCasesAroundCase(Case c) {
+		int count;
+		List<Case> casesAround = board.getCasesAround(c);
+		for (Case caseAround : casesAround) {
+			count = 0;
+			if (caseAround.getWeight().getWeight() < 0) {
+				if (caseAround.getWeight().equals(POSSIBLE_WUMPUS)
+						|| caseAround.getWeight().equals(POSSIBLE_PIT_OR_WUMPUS)) {
+					for (Case caseAroundTheCaseAround : board.getCasesAround(caseAround)) {
+						if (board.doesCaseContainsContent(caseAroundTheCaseAround, Content.STENCH)) {
+							count++;
+						}
+					}
+					if (count > 1) {
+						board.setCaseWeight(caseAround, WUMPUS);
+					}
+				} else if (caseAround.getWeight().equals(POSSIBLE_PIT)
+						|| caseAround.getWeight().equals(POSSIBLE_PIT_OR_WUMPUS)) {
+					for (Case caseAroundTheCaseAround : board.getCasesAround(caseAround)) {
+						if (board.doesCaseContainsContent(caseAroundTheCaseAround, Content.BREEZE)
+								|| caseAroundTheCaseAround.getWeight().equals(WALL)
+								|| caseAroundTheCaseAround.getWeight().equals(PIT)
+								|| caseAroundTheCaseAround.getWeight().equals(WUMPUS)) {
+							count++;
+						}
+					}
+					if (count > 3) {
+						board.setCaseWeight(caseAround, PIT);
+					}
+				}
+			}
+		}
+	}
+
+	public List<Case> getCasesAround() {
+		return board.getCasesAround(x, y);
 	}
 }

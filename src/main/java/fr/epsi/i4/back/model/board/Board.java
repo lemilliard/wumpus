@@ -5,6 +5,9 @@ import fr.epsi.i4.back.model.board.content.Content;
 import fr.epsi.i4.back.model.board.content.Weight;
 import fr.epsi.i4.util.Util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by tkint on 23/11/2017.
  */
@@ -45,7 +48,8 @@ public class Board {
 		return agent;
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		String str = "";
 
 		for (int y = cases.length - 1; y > -1; y--) {
@@ -59,7 +63,35 @@ public class Board {
 	}
 
 	public Case getCase(int x, int y) {
-		return cases[y][x];
+		Case c = null;
+		if (x > -1
+				&& x < width
+				&& y > -1
+				&& y < height) {
+			c = cases[y][x];
+		}
+		return c;
+	}
+
+	public List<Case> getCasesAround(int x, int y) {
+		List<Case> cases = new ArrayList<>();
+		if (getCase(x - 1, y) != null) {
+			cases.add(getCase(x - 1, y));
+		}
+		if (getCase(x + 1, y) != null) {
+			cases.add(getCase(x + 1, y));
+		}
+		if (getCase(x, y - 1) != null) {
+			cases.add(getCase(x, y - 1));
+		}
+		if (getCase(x, y + 1) != null) {
+			cases.add(getCase(x, y + 1));
+		}
+		return cases;
+	}
+
+	public List<Case> getCasesAround(Case c) {
+		return getCasesAround(c.getX(), c.getY());
 	}
 
 	public Case getAgentCase() {
@@ -71,20 +103,20 @@ public class Board {
 		for (int y = 0; y < height; y++) {
 			cases[y] = new Case[width];
 			for (int x = 0; x < width; x++) {
-				cases[y][x] = new Case();
+				cases[y][x] = new Case(x, y);
 				// Ajout des murs
 				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
 					setCaseContent(Content.WALL, x, y);
-                                        setCaseWeight(x, y, Weight.WALL);
+					setCaseWeight(x, y, Weight.WALL);
 				}
 			}
 		}
 		// Ajout de l'agent
 		setCaseContent(Content.AGENT, 1, 1);
-                
-                // Ajout de l'or
+
+		// Ajout de l'or
 		addCaseContent(Content.GOLD);
-                
+
 		// Ajout des puits
 		int count = (int) ((double) pitsPercentage / 100.0d * ((double) (width - 2) * (height - 2)));
 		for (int i = 0; i < count; i++) {
@@ -98,7 +130,7 @@ public class Board {
 		cases = null;
 		agent = new Agent(this);
 		generate();
-                this.agent.updateWeights();
+		this.agent.updateWeights();
 	}
 
 	public void addCaseContent(Content content, int x, int y) {
@@ -150,6 +182,10 @@ public class Board {
 		if (around != null) {
 			addCaseContentAround(x, y, around);
 		}
+	}
+
+	public boolean doesCaseContainsContent(Case c, Content content) {
+		return doesCaseContainsContent(c.getX(), c.getY(), content);
 	}
 
 	public boolean doesCaseContainsContent(int x, int y, Content content) {

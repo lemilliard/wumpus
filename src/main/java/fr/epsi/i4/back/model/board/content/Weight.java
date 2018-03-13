@@ -5,13 +5,13 @@ package fr.epsi.i4.back.model.board.content;
  */
 public enum Weight {
     SAFE(0),
+    VISITED(1),
     DEFAULT(-1),
     POSSIBLE_PIT(-2),
     POSSIBLE_WUMPUS(-3),
     PIT(-4),
     POSSIBLE_PIT_OR_WUMPUS(-5),
     WUMPUS(-6),
-    VISITED(1),
     WALL(8);
 
     private int weight;
