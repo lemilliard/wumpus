@@ -96,7 +96,7 @@ public class Game extends JFrame implements KeyListener {
 		if (mode.equals(Mode.AUTO)) {
 			while (true) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -127,25 +127,17 @@ public class Game extends JFrame implements KeyListener {
 		// Défini les directions possibles
 		List<Direction> directionsPossibles = new ArrayList<>();
 		if (board.getAgent().getX() > 1
-				|| !board.getAgent().getCasesAround().get(0).getWeight().equals(Weight.WALL)
-				|| !board.getAgent().getCasesAround().get(0).getWeight().equals(Weight.WUMPUS)
-				|| !board.getAgent().getCasesAround().get(0).getWeight().equals(Weight.PIT)) {
+				|| !board.getAgent().getCasesAround().get(0).getWeight().equals(Weight.WALL)) {
 			directionsPossibles.add(LEFT);
 		}
-		if (!board.getAgent().getCasesAround().get(1).getWeight().equals(Weight.WALL)
-				|| !board.getAgent().getCasesAround().get(1).getWeight().equals(Weight.WUMPUS)
-				|| !board.getAgent().getCasesAround().get(1).getWeight().equals(Weight.PIT)) {
+		if (!board.getAgent().getCasesAround().get(1).getWeight().equals(Weight.WALL)) {
 			directionsPossibles.add(RIGHT);
 		}
-		if (!board.getAgent().getCasesAround().get(3).getWeight().equals(Weight.WALL)
-				|| !board.getAgent().getCasesAround().get(3).getWeight().equals(Weight.WUMPUS)
-				|| !board.getAgent().getCasesAround().get(3).getWeight().equals(Weight.PIT)) {
+		if (!board.getAgent().getCasesAround().get(3).getWeight().equals(Weight.WALL)) {
 			directionsPossibles.add(UP);
 		}
 		if (board.getAgent().getY() > 1
-				|| !board.getAgent().getCasesAround().get(2).getWeight().equals(Weight.WALL)
-				|| !board.getAgent().getCasesAround().get(2).getWeight().equals(Weight.WUMPUS)
-				|| !board.getAgent().getCasesAround().get(2).getWeight().equals(Weight.PIT)) {
+				|| !board.getAgent().getCasesAround().get(2).getWeight().equals(Weight.WALL)) {
 			directionsPossibles.add(Direction.DOWN);
 		}
 
