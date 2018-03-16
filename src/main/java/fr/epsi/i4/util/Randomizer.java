@@ -7,27 +7,55 @@ import java.security.SecureRandom;
  */
 public class Randomizer {
 
-    public static int randomInt(int min, int max) {
-        SecureRandom secureRandom = new SecureRandom();
-        return secureRandom.nextInt(max - min + 1) + min;
-//        int rand = (max - min) / 2;
-//        for (int i = min; i < max; i++) {
-//            if (((Math.random() * 100) * Math.random()) > ((Math.random() * 100) * Math.random())) {
-//                rand++;
-//                if (rand > max) {
-//                    rand = min;
-//                }
-//            } else {
-//                rand--;
-//                if (rand < min) {
-//                    rand = max;
-//                }
-//            }
-//        }
-//        return rand;
-    }
+	private int min;
 
-    public static int doubleRand() {
-        return (int) ((Math.random() * 100) * Math.random());
-    }
+	private int max;
+
+	private int size;
+
+	private int[] possibilities;
+
+	public Randomizer(int min, int max) {
+		this.min = min;
+		this.max = max;
+		this.size = max - min;
+		this.possibilities = new int[size];
+		for (int i = 0; i < size; i++) {
+			this.possibilities[i] = min + i;
+		}
+	}
+
+	private int randomIndex() {
+		SecureRandom secureRandom = new SecureRandom();
+		return secureRandom.nextInt(size);
+	}
+
+	public int randomize() {
+		int rand = 0;
+		if (size > 0) {
+			shuffle();
+			rand = possibilities[0];
+		}
+		return rand;
+	}
+
+	private void shuffle() {
+		if (size > 1) {
+			int first;
+			int second = -1;
+			for (int i = 0; i < size; i++) {
+				first = randomIndex();
+				while (second == -1 || second == first) {
+					second = randomIndex();
+				}
+				swap(first, second);
+			}
+		}
+	}
+
+	private void swap(int i, int j) {
+		possibilities[i] = possibilities[i] + possibilities[j];
+		possibilities[j] = possibilities[i] - possibilities[j];
+		possibilities[i] = possibilities[i] - possibilities[j];
+	}
 }

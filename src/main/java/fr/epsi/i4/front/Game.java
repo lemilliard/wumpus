@@ -187,10 +187,11 @@ public class Game extends JFrame implements KeyListener {
 
 		// Process result
 		Direction choice;
+		Randomizer randomizer = new Randomizer(0, directionsPossibles.size() - 1);
 		if (possibleChoices.isEmpty()) {
-			choice = directionsPossibles.get(Randomizer.randomInt(0, directionsPossibles.size() - 1));
+			choice = directionsPossibles.get(randomizer.randomize());
 		} else {
-			choice = possibleChoices.get(Randomizer.randomInt(0, possibleChoices.size() - 1)).getChoice();
+			choice = possibleChoices.get(randomizer.randomize()).getChoice();
 		}
 		entry.put(DIRECTION, choice.name());
 

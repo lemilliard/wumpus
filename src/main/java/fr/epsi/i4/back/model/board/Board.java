@@ -22,6 +22,8 @@ public class Board {
 
 	private Agent agent;
 
+	private Randomizer randomizer;
+
 	public Board(int width, int height, int pitsPercentage) {
 		this.width = width + 2;
 		this.height = height + 2;
@@ -157,8 +159,10 @@ public class Board {
 
 	private int[] getRandomCoordinatesForContent(Content content) {
 		int[] xy = new int[2];
-		xy[0] = Randomizer.randomInt(2, width - 2);
-		xy[1] = Randomizer.randomInt(2, height - 2);
+		randomizer = new Randomizer(1, width - 1);
+		xy[0] = randomizer.randomize();
+		randomizer = new Randomizer(1, height - 1);
+		xy[1] = randomizer.randomize();
 		if (!getCase(xy[0], xy[1]).canContain(content)) {
 			return getRandomCoordinatesForContent(content);
 		}

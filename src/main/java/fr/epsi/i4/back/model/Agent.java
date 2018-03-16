@@ -139,9 +139,7 @@ public class Agent {
 		Case caseAround;
 		for (Map.Entry<Direction, Case> entry : getCasesAround().entrySet()) {
 			caseAround = entry.getValue();
-			if (board.isCaseAlterable(caseAround)) {
-				board.setCaseWeight(caseAround, weight);
-			}
+			board.setCaseWeight(caseAround, weight);
 		}
 	}
 
@@ -199,7 +197,7 @@ public class Agent {
 				for (Map.Entry<Direction, Case> subEntry : board.getCasesAround(caseAround).entrySet()) {
 					caseAroundTheCaseAround = subEntry.getValue();
 					// Si la case est safe ou un mur ou un puit ou un wumpus ou visitée
-					if (caseAroundTheCaseAround.getWeight().equalsAnyOf(SAFE, WALL, PIT, WUMPUS, VISITED)) {
+					if (caseAroundTheCaseAround.getWeight().equalsAnyOf(SAFE, WALL, PIT, VISITED)) {
 						// On incrémente le compteur
 						count++;
 						// Sinon, on récupère la case à mettre à jour
@@ -219,7 +217,7 @@ public class Agent {
 				for (Map.Entry<Direction, Case> subEntry : board.getCasesAround(caseAround).entrySet()) {
 					caseAroundTheCaseAround = subEntry.getValue();
 					// Si la case est safe ou un mur ou un puit ou un wumpus ou visitée
-					if (caseAroundTheCaseAround.getWeight().equalsAnyOf(SAFE, WALL, PIT, WUMPUS, VISITED)) {
+					if (caseAroundTheCaseAround.getWeight().equalsAnyOf(SAFE, WALL, WUMPUS, VISITED)) {
 						count++;
 						// Sinon, on récupère la case à mettre à jour
 					} else {
