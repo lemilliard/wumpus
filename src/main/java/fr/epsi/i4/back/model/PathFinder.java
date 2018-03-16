@@ -49,7 +49,7 @@ public class PathFinder {
 		Case caseAround;
 		for (Map.Entry<Direction, Case> entry : board.getCasesAround(c).entrySet()) {
 			caseAround = entry.getValue();
-			if (caseAround.getWeight().getWeight() < 1 && caseAround.getWeight().getWeight() > -4) {
+			if (!visitedPath(caseAround) && caseAround.getWeight().equalsAnyOf(Weight.DEFAULT, Weight.POSSIBLE_PIT, Weight.POSSIBLE_WUMPUS, Weight.POSSIBLE_PIT_OR_WUMPUS, Weight.SAFE)) {
 				result = true;
 			}
 		}
