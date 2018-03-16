@@ -8,7 +8,7 @@ import fr.epsi.i4.back.model.board.Board;
 import fr.epsi.i4.back.model.board.Case;
 import fr.epsi.i4.back.model.board.Direction;
 import fr.epsi.i4.back.model.board.content.Weight;
-import fr.epsi.i4.util.Util;
+import fr.epsi.i4.util.Randomizer;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -188,9 +188,9 @@ public class Game extends JFrame implements KeyListener {
 		// Process result
 		Direction choice;
 		if (possibleChoices.isEmpty()) {
-			choice = directionsPossibles.get(Util.randomInt(0, directionsPossibles.size() - 1));
+			choice = directionsPossibles.get(Randomizer.randomInt(0, directionsPossibles.size() - 1));
 		} else {
-			choice = possibleChoices.get(Util.randomInt(0, possibleChoices.size() - 1)).getChoice();
+			choice = possibleChoices.get(Randomizer.randomInt(0, possibleChoices.size() - 1)).getChoice();
 		}
 		entry.put(DIRECTION, choice.name());
 

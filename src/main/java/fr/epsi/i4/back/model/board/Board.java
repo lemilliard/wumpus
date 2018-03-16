@@ -3,10 +3,9 @@ package fr.epsi.i4.back.model.board;
 import fr.epsi.i4.back.model.Agent;
 import fr.epsi.i4.back.model.board.content.Content;
 import fr.epsi.i4.back.model.board.content.Weight;
-import fr.epsi.i4.util.Util;
+import fr.epsi.i4.util.Randomizer;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by tkint on 23/11/2017.
@@ -158,8 +157,8 @@ public class Board {
 
 	private int[] getRandomCoordinatesForContent(Content content) {
 		int[] xy = new int[2];
-		xy[0] = Util.randomInt(2, width - 2);
-		xy[1] = Util.randomInt(2, height - 2);
+		xy[0] = Randomizer.randomInt(2, width - 2);
+		xy[1] = Randomizer.randomInt(2, height - 2);
 		if (!getCase(xy[0], xy[1]).canContain(content)) {
 			return getRandomCoordinatesForContent(content);
 		}
@@ -197,7 +196,7 @@ public class Board {
 	}
 
 	public boolean isCaseAlterable(Case c) {
-		return c.getWeight() == null || c.getWeight().getWeight() < 0;
+		return c.getWeight() == null || (c.getWeight().equalsAnyOf(Weight.DEFAULT, Weight.POSSIBLE_WUMPUS, Weight.POSSIBLE_PIT, Weight.POSSIBLE_PIT_OR_WUMPUS));
 	}
 
 	public boolean isCaseAlterable(int x, int y) {

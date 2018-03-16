@@ -5,7 +5,7 @@ import java.security.SecureRandom;
 /**
  * Created by tkint on 15/12/2017.
  */
-public class Util {
+public class Randomizer {
 
     public static int randomInt(int min, int max) {
         SecureRandom secureRandom = new SecureRandom();
