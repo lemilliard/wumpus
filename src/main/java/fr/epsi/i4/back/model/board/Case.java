@@ -35,7 +35,8 @@ public class Case {
 		return contents;
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 
 		for (int i = 0; i < contents.length; i++) {
@@ -126,5 +127,9 @@ public class Case {
 
 	public int getY() {
 		return y;
+	}
+
+	public boolean isMegaSafe() {
+		return !weight.equals(Weight.WALL) && !weight.equals(Weight.WUMPUS) && !weight.equals(Weight.PIT);
 	}
 }

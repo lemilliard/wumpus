@@ -5,7 +5,7 @@ import fr.epsi.i4.back.model.board.content.Content;
 import fr.epsi.i4.back.model.board.content.Weight;
 import fr.epsi.i4.util.Util;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -73,24 +73,24 @@ public class Board {
 		return c;
 	}
 
-	public List<Case> getCasesAround(int x, int y) {
-		List<Case> cases = new ArrayList<>();
+	public HashMap<Direction, Case> getCasesAround(int x, int y) {
+		HashMap<Direction, Case> cases = new HashMap<>();
 		if (getCase(x - 1, y) != null) {
-			cases.add(getCase(x - 1, y));
+			cases.put(Direction.LEFT, getCase(x - 1, y));
 		}
 		if (getCase(x + 1, y) != null) {
-			cases.add(getCase(x + 1, y));
+			cases.put(Direction.RIGHT, getCase(x + 1, y));
 		}
 		if (getCase(x, y - 1) != null) {
-			cases.add(getCase(x, y - 1));
+			cases.put(Direction.DOWN, getCase(x, y - 1));
 		}
 		if (getCase(x, y + 1) != null) {
-			cases.add(getCase(x, y + 1));
+			cases.put(Direction.UP, getCase(x, y + 1));
 		}
 		return cases;
 	}
 
-	public List<Case> getCasesAround(Case c) {
+	public HashMap<Direction, Case> getCasesAround(Case c) {
 		return getCasesAround(c.getX(), c.getY());
 	}
 

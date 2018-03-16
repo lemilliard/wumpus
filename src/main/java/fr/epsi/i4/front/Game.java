@@ -122,22 +122,20 @@ public class Game extends JFrame implements KeyListener {
 
 	private void playRound() {
 		// Cases autour de l'agent
-		List<Case> casesAround = board.getAgent().getCasesAround();
+		HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
 
 		// Défini les directions possibles
 		List<Direction> directionsPossibles = new ArrayList<>();
-		if (board.getAgent().getX() > 1
-				|| !board.getAgent().getCasesAround().get(0).getWeight().equals(Weight.WALL)) {
+		if (board.getAgent().getX() > 1 && board.getAgent().getCasesAround().get(LEFT).isMegaSafe()) {
 			directionsPossibles.add(LEFT);
 		}
-		if (!board.getAgent().getCasesAround().get(1).getWeight().equals(Weight.WALL)) {
+		if (board.getAgent().getCasesAround().get(RIGHT).isMegaSafe()) {
 			directionsPossibles.add(RIGHT);
 		}
-		if (!board.getAgent().getCasesAround().get(3).getWeight().equals(Weight.WALL)) {
+		if (board.getAgent().getCasesAround().get(UP).isMegaSafe()) {
 			directionsPossibles.add(UP);
 		}
-		if (board.getAgent().getY() > 1
-				|| !board.getAgent().getCasesAround().get(2).getWeight().equals(Weight.WALL)) {
+		if (board.getAgent().getY() > 1 && board.getAgent().getCasesAround().get(DOWN).isMegaSafe()) {
 			directionsPossibles.add(Direction.DOWN);
 		}
 
@@ -147,9 +145,9 @@ public class Game extends JFrame implements KeyListener {
 
 		// Initialisation de l'entry
 		HashMap<String, String> entry = new HashMap<>();
-		for (int j = 0; j < 4; j++) {
-			if (!casesAround.get(j).getWeight().equals(Weight.WALL)) {
-				entry.put(Direction.getByIndex(j).name(), casesAround.get(j).getWeight().name());
+		for (Direction direction : Direction.values()) {
+			if (!casesAround.get(direction).getWeight().equals(Weight.WALL)) {
+				entry.put(direction.name(), casesAround.get(direction).getWeight().name());
 			}
 		}
 
@@ -321,13 +319,13 @@ public class Game extends JFrame implements KeyListener {
 			}
 			if (direction != null) {
 				// Cases autour de l'agent
-				List<Case> casesAround = board.getAgent().getCasesAround();
+				HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
 
 				// Ajout de l'entry dans l'arbre
 				HashMap<String, String> entry = new HashMap<>();
-				for (int j = 0; j < 4; j++) {
-					if (!casesAround.get(j).getWeight().equals(Weight.WALL)) {
-						entry.put(Direction.getByIndex(j).name(), casesAround.get(j).getWeight().name());
+				for (Direction dir : Direction.values()) {
+					if (!casesAround.get(dir).getWeight().equals(Weight.WALL)) {
+						entry.put(dir.name(), casesAround.get(dir).getWeight().name());
 					}
 				}
 				entry.put(DIRECTION, direction.name());
