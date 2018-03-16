@@ -2,8 +2,10 @@ package fr.epsi.i4.back.model;
 
 import fr.epsi.i4.back.model.board.Board;
 import fr.epsi.i4.back.model.board.Case;
+import fr.epsi.i4.back.model.board.Direction;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Thomas Kint
@@ -37,10 +39,12 @@ public class PathFinder {
     public boolean visitedPath(Case c) {
         return cases.contains(c);
     }
-    
-    public Case notVisitedCase(){
-        for(Case caseAround : board.getCasesAround(pathFinding.getLastIn())){
-            if(!visitedPath(caseAround)){
+
+    public Case notVisitedCase() {
+        Case caseAround;
+        for (Map.Entry<Direction, Case> entry : board.getCasesAround(pathFinding.getLastIn()).entrySet()) {
+            caseAround = entry.getValue();
+            if (!visitedPath(caseAround)) {
                 return caseAround;
             }
         }
@@ -49,8 +53,9 @@ public class PathFinder {
 
     public boolean caseAroudNotVisited(Case c) {
         boolean result = false;
-        List<Case> casesAround = board.getCasesAround(c);
-        for (Case caseAround : casesAround) {
+        Case caseAround;
+        for (Map.Entry<Direction, Case> entry : board.getCasesAround(c).entrySet()) {
+            caseAround = entry.getValue();
             if (caseAround.getWeight().getWeight() < 1 && caseAround.getWeight().getWeight() > -4) {
                 result = true;
             }
@@ -68,19 +73,19 @@ public class PathFinder {
         return result;
     }
 
-    public void findPath(){
+    public void findPath() {
         Case lastIn = null;
         Case notVisited = null;
-        while(pathFinding.size() > 0){
+        while (pathFinding.size() > 0) {
             lastIn = pathFinding.getLastIn();
-            if(caseAroudNotVisited(lastIn)){
-                if(path.size() > pathFinding.size()){
+            if (caseAroudNotVisited(lastIn)) {
+                if (path.size() > pathFinding.size()) {
                     path = pathFinding;
                     pathFinding.pop();
                 }
             } else {
                 notVisited = notVisitedCase();
-                if(notVisited != null){
+                if (notVisited != null) {
                     pathFinding.push(notVisited);
                 } else {
                     pathFinding.pop();
@@ -88,5 +93,5 @@ public class PathFinder {
             }
         }
     }
-    
+
 }
