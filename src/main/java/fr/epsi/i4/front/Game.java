@@ -3,9 +3,7 @@ package fr.epsi.i4.front;
 import fr.decisiontree.Config;
 import fr.decisiontree.DecisionTree;
 import fr.decisiontree.model.Result;
-import fr.epsi.i4.back.model.Agent;
-import fr.epsi.i4.back.model.Mode;
-import fr.epsi.i4.back.model.PossibleChoice;
+import fr.epsi.i4.back.model.*;
 import fr.epsi.i4.back.model.board.Board;
 import fr.epsi.i4.back.model.board.Case;
 import fr.epsi.i4.back.model.board.Direction;
@@ -41,11 +39,14 @@ public class Game extends JFrame implements KeyListener {
 
 	private int death = 0;
 
+	private PathFinder pathFinder;
+
 	public Game(Board board, Mode mode, int balls) {
 		this.board = board;
 		this.mode = mode;
 		this.exploration = 10;
 		this.balls = balls / 10;
+		this.pathFinder = new PathFinder(board);
 		initWindow();
 		initDecisionTree();
 	}
@@ -121,8 +122,15 @@ public class Game extends JFrame implements KeyListener {
 	}
 
 	private void playRound() {
+		System.out.println(board.toString());
+
 		// Cases autour de l'agent
 		HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
+
+		Stack<Case> pathFinded = pathFinder.findPath();
+		while (pathFinded.size() > 0) {
+			rounds += processDirection(board.getDirectionByCase(pathFinded.antePop()));
+		}
 
 		// Défini les directions possibles
 		List<Direction> directionsPossibles = new ArrayList<>();
@@ -187,20 +195,20 @@ public class Game extends JFrame implements KeyListener {
 		entry.put(DIRECTION, choice.name());
 
 		// Incrémente les tours et process result
-		rounds += processTreeResult(choice);
-
-		// Mise à jour de l'affichage
-		refresh();
+		rounds += processDirection(choice);
 
 		// Mise à jour de l'état du jeu
 		updateGameState(entry);
+
+		// Mise à jour de l'affichage
+		refresh();
 	}
 
 	public void refresh() {
 		getGame().refresh();
 	}
 
-	private int processTreeResult(Direction treeResult) {
+	private int processDirection(Direction treeResult) {
 		Agent agent = board.getAgent();
 		return agent.move(treeResult);
 	}
@@ -331,7 +339,7 @@ public class Game extends JFrame implements KeyListener {
 				entry.put(DIRECTION, direction.name());
 
 				// Déplacement
-				rounds += processTreeResult(direction);
+				rounds += processDirection(direction);
 
 				// Mise à jour de l'affichage
 				refresh();
@@ -354,7 +362,7 @@ public class Game extends JFrame implements KeyListener {
 			result = 1;
 		}
 		DecisionTree.addData(entry, result);
-		DecisionTree.print();
+//		DecisionTree.print();
 		DecisionTree.save();
 
 		if (!board.getAgent().isAlive()) {

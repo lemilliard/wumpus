@@ -213,4 +213,24 @@ public class Board {
 	public void setCaseWeight(int x, int y, Weight weight) {
 		setCaseWeight(getCase(x, y), weight);
 	}
+
+	public Direction getDirectionByCase(Case c) {
+		Direction direction = null;
+
+		if (c.getX() == agent.getX() + 1
+				&& c.getY() == agent.getY()) {
+			direction = Direction.RIGHT;
+		} else if (c.getX() == agent.getX() - 1
+				&& c.getY() == agent.getY()) {
+			direction = Direction.LEFT;
+		} else if (c.getX() == agent.getX()
+				&& c.getY() == agent.getY() + 1) {
+			direction = Direction.UP;
+		} else if (c.getX() == agent.getX()
+				&& c.getY() == agent.getY() - 1) {
+			direction = Direction.DOWN;
+		}
+
+		return direction;
+	}
 }

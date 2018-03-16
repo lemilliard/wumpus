@@ -238,4 +238,8 @@ public class Agent {
 	public HashMap<Direction, Case> getCasesAround() {
 		return board.getCasesAround(x, y);
 	}
+
+	public Case getCase() {
+		return board.getCase(x, y);
+	}
 }
