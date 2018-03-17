@@ -69,12 +69,15 @@ public class PathFinder {
 	public Stack<Case> findPath() {
 		Case lastIn;
 		Case notVisited;
+                cases.removeAll(cases);
+                path = new Stack<>();
+                pathFinding = new Stack<>();
 		push(board.getAgentCase());
 		while (pathFinding.size() > 0) {
 			lastIn = pathFinding.getLastIn();
-			if (caseAroudNotVisited(lastIn)) {
-				if (path.size() > pathFinding.size()) {
-					path = pathFinding;
+			if (pathFinding.size() > 0 && caseAroudNotVisited(lastIn)) {
+				if (path.size() == 0 || path.size() > pathFinding.size()) {
+					path.clone(pathFinding);
 				}
 				pathFinding.pop();
 			} else {

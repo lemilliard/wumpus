@@ -46,4 +46,10 @@ public class Stack<E> {
 	public E antePop() {
 		return this.stack.remove(0);
 	}
+        
+        public void clone(Stack<E> stackToClone){
+            for (E entry : stackToClone.stack){
+                push(entry);
+            }
+        }
 }
