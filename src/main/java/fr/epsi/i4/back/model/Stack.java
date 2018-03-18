@@ -39,15 +39,30 @@ public class Stack<E> {
 		return stack.size();
 	}
 
+        /**
+         * retourne le dernier element de la pile
+         * @return 
+         */
 	public E getLastIn() {
 		return this.stack.get((this.stack.size() - 1));
 	}
 
+        /**
+         * remove l'element à la position 1 dans la stack
+         * l'element 0 etant la case actuelle, celle ci ne nous interesse pas
+         * @return element supprime
+         */
 	public E antePop() {
-		return this.stack.remove(0);
+		return this.stack.remove(1);
 	}
         
+        /**
+         * Efface les données pour les remplacer par celle de la stack en parametre
+         * @param stackToClone 
+         */
         public void clone(Stack<E> stackToClone){
+            // Remove avant de cloner
+            stack.removeAll(stack);
             for (E entry : stackToClone.stack){
                 push(entry);
             }

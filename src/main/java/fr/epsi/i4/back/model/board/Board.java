@@ -159,9 +159,11 @@ public class Board {
 
 	private int[] getRandomCoordinatesForContent(Content content) {
 		int[] xy = new int[2];
-		randomizer = new Randomizer(1, width - 1);
+                // Random entre 2 et width - 1 afin de ne pas bloquer l'agent dès le debut
+		randomizer = new Randomizer(2, width - 1);
 		xy[0] = randomizer.randomize();
-		randomizer = new Randomizer(1, height - 1);
+                // Random entre 2 et height - 1 afin de ne pas bloquer l'agent dès le debut
+		randomizer = new Randomizer(2, height - 1);
 		xy[1] = randomizer.randomize();
 		if (!getCase(xy[0], xy[1]).canContain(content)) {
 			return getRandomCoordinatesForContent(content);

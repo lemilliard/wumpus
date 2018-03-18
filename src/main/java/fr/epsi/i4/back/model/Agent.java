@@ -101,7 +101,8 @@ public class Agent {
 			board.getCase(this.x, this.y).removeContent(Content.AGENT);
 			board.getCase(x, y).addContent(Content.AGENT);
 			board.getCase(this.x, this.y).setWeight(VISITED);
-			board.getCase(x, y).setWeight(SAFE);
+//			board.getCase(x, y).setWeight(SAFE);
+			board.getCase(x, y).setWeight(VISITED);
 			this.x = x;
 			this.y = y;
 			verifyAlive();
@@ -132,7 +133,8 @@ public class Agent {
 		} else {
 			setWeightCasesAround(SAFE);
 		}
-		updateWeightsOfCasesAroundCase();
+//		updateWeightsOfCasesAroundCase();
+                updateWeightsCaseAround(board.getAgentCase(), 3);
 	}
 
 	private void setWeightCasesAround(Weight weight) {
@@ -142,6 +144,68 @@ public class Agent {
 			board.setCaseWeight(caseAround, weight);
 		}
 	}
+        
+        /**
+         * Met à jour le poids des case autour en s'apelle jusqu'a attendre la profondeur de parcours de niveau demandé
+         * @param c
+         * @param profondeur 
+         */
+        private void updateWeightsCaseAround(Case c, int profondeur){
+            if(profondeur > -1){
+            Case caseAround;
+            int count = 0;
+            Case caseToUpdate = null;
+                if(c.getWeight().equalsAnyOf(POSSIBLE_PIT, POSSIBLE_PIT_OR_WUMPUS)){
+                    for (Map.Entry<Direction, Case> entry : board.getCasesAround(c).entrySet()){
+                        caseAround = entry.getValue();
+                        if(caseAround.getWeight().equalsAnyOf(WALL, WUMPUS, PIT) || (caseAround.getWeight().equals(VISITED) && caseAround.getContents().equals(Content.BREEZE))){
+                            count++;
+                        }
+                        updateWeightsCaseAround(caseAround, profondeur - 1);
+                    }
+                    if(count > 3){
+                        board.setCaseWeight(c, PIT);
+                    }
+                } else if (c.getWeight().equalsAnyOf(POSSIBLE_WUMPUS, POSSIBLE_PIT_OR_WUMPUS)){
+                    for (Map.Entry<Direction, Case> entry : board.getCasesAround(c).entrySet()){
+                        caseAround = entry.getValue();
+                        if(caseAround.getWeight().equalsAnyOf(WALL, WUMPUS, PIT) || (caseAround.getWeight().equals(VISITED) && caseAround.getContents().equals(Content.STENCH))){
+                            count++;
+                        } 
+                        updateWeightsCaseAround(caseAround, profondeur - 1);
+                    }
+                    if(count > 1){
+                        board.setCaseWeight(c, WUMPUS);
+                    }
+                } else if (c.getWeight().equals(VISITED) && board.doesCaseContainsContent(c, Content.BREEZE)){
+                    for (Map.Entry<Direction, Case> entry : board.getCasesAround(c).entrySet()){
+                        caseAround = entry.getValue();
+                        if(caseAround.getWeight().equalsAnyOf(VISITED, WALL, WUMPUS)){
+                            count++;
+                        } else {
+                            caseToUpdate = caseAround;
+                        }
+                        updateWeightsCaseAround(caseAround, profondeur - 1);
+                        if(caseToUpdate != null && count == 3){
+                            board.setCaseWeight(caseToUpdate, PIT);
+                        }
+                    }
+                } else if (c.getWeight().equals(VISITED) && board.doesCaseContainsContent(c, Content.STENCH)){
+                    for (Map.Entry<Direction, Case> entry : board.getCasesAround(c).entrySet()){
+                        caseAround = entry.getValue();
+                        if(caseAround.getWeight().equalsAnyOf(VISITED, WALL, PIT)){
+                            count++;
+                        } else {
+                            caseToUpdate = caseAround;
+                        }
+                        updateWeightsCaseAround(caseAround, profondeur - 1);
+                        if(caseToUpdate != null && count == 3){
+                            board.setCaseWeight(caseToUpdate, WUMPUS);
+                        }
+                    }
+                }
+            }
+        }
 
 	private void updateWeightsOfCasesAroundCase() {
 		int count;

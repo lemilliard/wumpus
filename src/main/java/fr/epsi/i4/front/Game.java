@@ -18,8 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static fr.epsi.i4.back.model.board.Direction.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Game extends JFrame implements KeyListener {
 
@@ -98,12 +96,18 @@ public class Game extends JFrame implements KeyListener {
         setVisible(true);
         if (mode.equals(Mode.AUTO)) {
             while (true) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+//                try {
+//                    Thread.sleep(500);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+                if (rounds > 200) {
+                    death++;
+                    System.out.println("L'agent est décédé...");
+                    reset();
+                } else {
+                    playRound();
                 }
-                playRound();
             }
         }
     }
@@ -124,18 +128,25 @@ public class Game extends JFrame implements KeyListener {
     }
 
     private void playRound() {
-        System.out.println(board.toString());
+//        System.out.println(board.toString());
 
         // Cases autour de l'agent
         HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
 
 	    Direction direction;
         Stack<Case> pathFinded = pathFinder.findPath();
+        Stack<Case> pathFindedCloned = new Stack<>();
+        pathFindedCloned.clone(pathFinded);
+        // pathFinded[0] correspond à la case actuelle donc on ne prends pas en compte ce deplacement
         while (pathFinded.size() > 1) {
-        	direction = board.getDirectionByCase(pathFinded.antePop());
-        	if (direction != null) {
-		        rounds += processDirection(direction);
-	        }
+            try {
+                rounds += processDirection(board.getDirectionByCase(pathFinded.antePop()));
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                System.out.println(pathFinded.toString());
+                System.out.println(pathFindedCloned.toString());
+            }
+//            refresh();
         }
 
         // Défini les directions possibles
@@ -175,15 +186,20 @@ public class Game extends JFrame implements KeyListener {
             // Gestion du ratio
             if (result != null) {
                 double ratio = result.getRatio();
-                explore(possibleChoices, result, directionsPossibles.get(i));
+//                explore(possibleChoices, result, directionsPossibles.get(i));
                 verifierSafe(possibleChoices, result, directionsPossibles.get(i));
                 if (result.getValue().equals("Vivant")) {
-                    for (int j = 0; j < (int) (ratio * 10); j++) {
-                        possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                    //Si la case à deja ete visité on l'ajoute une seule fois sinon on ajoute la possibilité normalement
+                    if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
+                        for (int j = 0; j < (int) (ratio * 10); j++) {
+                            possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                        }
                     }
                 } else {
-                    for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
-                        possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                    if(ratio <= 0.6){
+                        for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
+                            possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                        }
                     }
                 }
             }
@@ -210,7 +226,7 @@ public class Game extends JFrame implements KeyListener {
         updateGameState(entry);
 
         // Mise à jour de l'affichage
-        refresh();
+//        refresh();
     }
 
     public void refresh() {
@@ -269,8 +285,7 @@ public class Game extends JFrame implements KeyListener {
         boolean toExplore = false;
         switch (direction) {
             case UP:
-                if (board.getCase(x, y + 1).getWeight().getWeight() < 1
-                        && board.getCase(x, y + 1).getWeight().getWeight() > -4) {
+                if (board.getCase(x, y + 1).getWeight().equals(Weight.VISITED)) {
                     for (int j = 0; j < balls; j++) {
                         possibleChoices.add(new PossibleChoice(result, direction));
                     }
@@ -278,8 +293,7 @@ public class Game extends JFrame implements KeyListener {
                 }
                 break;
             case DOWN:
-                if (board.getCase(x, y - 1).getWeight().getWeight() < 1
-                        && board.getCase(x, y + 1).getWeight().getWeight() > -4) {
+                if (board.getCase(x, y - 1).getWeight().equals(Weight.VISITED)) {
                     for (int j = 0; j < balls; j++) {
                         possibleChoices.add(new PossibleChoice(result, direction));
                     }
@@ -287,8 +301,7 @@ public class Game extends JFrame implements KeyListener {
                 }
                 break;
             case LEFT:
-                if (board.getCase(x - 1, y).getWeight().getWeight() < 1
-                        && board.getCase(x, y + 1).getWeight().getWeight() > -4) {
+                if (board.getCase(x - 1, y).getWeight().equals(Weight.VISITED)) {
                     for (int j = 0; j < balls; j++) {
                         possibleChoices.add(new PossibleChoice(result, direction));
                     }
@@ -296,8 +309,7 @@ public class Game extends JFrame implements KeyListener {
                 }
                 break;
             case RIGHT:
-                if (board.getCase(x + 1, y).getWeight().getWeight() < 1
-                        && board.getCase(x, y + 1).getWeight().getWeight() > -4) {
+                if (board.getCase(x + 1, y).getWeight().equals(Weight.VISITED)) {
                     for (int j = 0; j < balls; j++) {
                         possibleChoices.add(new PossibleChoice(result, direction));
                     }
@@ -355,8 +367,6 @@ public class Game extends JFrame implements KeyListener {
 
                 // Mise à jour de l'état du jeu
                 updateGameState(entry);
-
-//                Stack<Case> pathFinded = pathFinder.findPath();
 
             }
             e.consume();
