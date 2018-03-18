@@ -29,9 +29,9 @@ public class FrontCase extends JPanel {
 				} else {
 					label = new JLabel(content.toString());
 				}
-				if (content.equals(Content.AGENT) || content.equals(Content.WALL)) {
+//				if (content.equals(Content.AGENT) || content.equals(Content.WALL)) {
 					add(label);
-				}
+//				}
 			}
 		}
 		JLabel label = new JLabel(Integer.toString(c.getWeight().getWeight()));

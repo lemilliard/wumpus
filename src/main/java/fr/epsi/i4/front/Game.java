@@ -32,6 +32,8 @@ public class Game extends JFrame implements KeyListener {
     private final int exploration;
 
     private final int balls;
+    
+    private final int gonzesse;
 
     private int rounds = 0;
 
@@ -46,6 +48,7 @@ public class Game extends JFrame implements KeyListener {
         this.mode = mode;
         this.exploration = 10;
         this.balls = balls / 10;
+        this.gonzesse = (10 - this.balls);
         this.pathFinder = new PathFinder(board);
         initWindow();
         initDecisionTree();
@@ -96,11 +99,11 @@ public class Game extends JFrame implements KeyListener {
         setVisible(true);
         if (mode.equals(Mode.AUTO)) {
             while (true) {
-//                try {
-//                    Thread.sleep(500);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 if (rounds > 200) {
                     death++;
                     System.out.println("L'agent est décédé...");
@@ -146,7 +149,7 @@ public class Game extends JFrame implements KeyListener {
                 System.out.println(pathFinded.toString());
                 System.out.println(pathFindedCloned.toString());
             }
-//            refresh();
+            refresh();
         }
 
         // Défini les directions possibles
@@ -190,18 +193,20 @@ public class Game extends JFrame implements KeyListener {
                 verifierSafe(possibleChoices, result, directionsPossibles.get(i));
                 if (result.getValue().equals("Vivant")) {
                     //Si la case à deja ete visité on l'ajoute une seule fois sinon on ajoute la possibilité normalement
-                    if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
+                    if (!explore(possibleChoices, result, directionsPossibles.get(i)) && (ratio * 10) > gonzesse) {
                         for (int j = 0; j < (int) (ratio * 10); j++) {
                             possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
                         }
                     }
-                } else {
-                    if(ratio <= 0.6){
-                        for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
-                            possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-                        }
-                    }
+//                } else {
+//                    if(ratio <= 0.6){
+//                        for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
+//                            possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+//                        }
+//                    }
                 }
+            } else {
+                possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
             }
             entry.remove(DIRECTION);
             i++;
@@ -226,7 +231,7 @@ public class Game extends JFrame implements KeyListener {
         updateGameState(entry);
 
         // Mise à jour de l'affichage
-//        refresh();
+        refresh();
     }
 
     public void refresh() {
