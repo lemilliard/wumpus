@@ -129,9 +129,13 @@ public class Game extends JFrame implements KeyListener {
         // Cases autour de l'agent
         HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
 
+	    Direction direction;
         Stack<Case> pathFinded = pathFinder.findPath();
         while (pathFinded.size() > 1) {
-            rounds += processDirection(board.getDirectionByCase(pathFinded.antePop()));
+        	direction = board.getDirectionByCase(pathFinded.antePop());
+        	if (direction != null) {
+		        rounds += processDirection(direction);
+	        }
         }
 
         // Défini les directions possibles
@@ -155,9 +159,9 @@ public class Game extends JFrame implements KeyListener {
 
         // Initialisation de l'entry
         HashMap<String, String> entry = new HashMap<>();
-        for (Direction direction : Direction.values()) {
-            if (!casesAround.get(direction).getWeight().equals(Weight.WALL)) {
-                entry.put(direction.name(), casesAround.get(direction).getWeight().name());
+        for (Direction dir : Direction.values()) {
+            if (!casesAround.get(dir).getWeight().equals(Weight.WALL)) {
+                entry.put(dir.name(), casesAround.get(dir).getWeight().name());
             }
         }
 
@@ -189,10 +193,12 @@ public class Game extends JFrame implements KeyListener {
 
 		// Process result
 		Direction choice;
-		Randomizer randomizer = new Randomizer(0, directionsPossibles.size() - 1);
+		Randomizer randomizer;
 		if (possibleChoices.isEmpty()) {
+			randomizer = new Randomizer(0, directionsPossibles.size() - 1);
 			choice = directionsPossibles.get(randomizer.randomize());
 		} else {
+			randomizer = new Randomizer(0, possibleChoices.size() - 1);
 			choice = possibleChoices.get(randomizer.randomize()).getChoice();
 		}
 		entry.put(DIRECTION, choice.name());
