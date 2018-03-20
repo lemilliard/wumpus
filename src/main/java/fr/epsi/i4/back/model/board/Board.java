@@ -144,28 +144,41 @@ public class Board {
 		getCase(x, y).addContent(content);
 	}
 
-	public int[] getCaseContent(Content content){
 
-		int tabContentX[] = new int[0];
-		int tabContentY[] = new int[0];
-		int a = 0;
-		int tabFinal[];
-
+	public ArrayList<Case> getCaseContent(Content content){
+		ArrayList<Case> posContent = new ArrayList<>();
 		for (int y = cases.length - 1; y > -1; y--) {
 			for (int x = cases.length - 1; x < cases[y].length; x++) {
 				if (doesCaseContainsContent(x, y, content)) {
-					tabContentX[a] += x;
-					tabContentY[a] += y;
-					a++;
+					posContent.add(getCase(x,y));
 				}
 			}
 		}
-		tabFinal = new int[tabContentX.length + tabContentY.length];
-		System.arraycopy(tabContentX, 0, tabFinal, 0, tabContentX.length);
-		System.arraycopy(tabContentY, 0, tabFinal, tabContentX.length, tabContentY.length);
-
-		return tabFinal;
+		return posContent;
 	}
+
+//	public int[] getCaseContent(Content content){
+//
+//		int tabContentX[] = new int[0];
+//		int tabContentY[] = new int[0];
+//		int a = 0;
+//		int tabFinal[];
+//
+//		for (int y = cases.length - 1; y > -1; y--) {
+//			for (int x = cases.length - 1; x < cases[y].length; x++) {
+//				if (doesCaseContainsContent(x, y, content)) {
+//					tabContentX[a] += x;
+//					tabContentY[a] += y;
+//					a++;
+//				}
+//			}
+//		}
+//		tabFinal = new int[tabContentX.length + tabContentY.length];
+//		System.arraycopy(tabContentX, 0, tabFinal, 0, tabContentX.length);
+//		System.arraycopy(tabContentY, 0, tabFinal, tabContentX.length, tabContentY.length);
+//
+//		return tabFinal;
+//	}
 
 	private void addCaseContentAround(int x, int y, Content content) {
 		if (x > 0 && getCase(x - 1, y).canContain(content)) {
