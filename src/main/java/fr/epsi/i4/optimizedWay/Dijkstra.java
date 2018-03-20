@@ -2,8 +2,7 @@ package fr.epsi.i4.optimizedWay;
 
 import fr.epsi.i4.back.model.Agent;
 import fr.epsi.i4.back.model.board.Board;
-import fr.epsi.i4.back.model.board.Direction;
-import fr.epsi.i4.back.model.board.content.Gold;
+import fr.epsi.i4.back.model.board.content.Content;
 
 public class Dijkstra {
 
@@ -19,13 +18,30 @@ public class Dijkstra {
         int toursUtilises = 0;
 
         Agent myAgent = new Agent(board);
-        Gold myGold = new Gold(board);
 
-        if (myAgent.getY() < myGold.getGoldY()){
-            myAgent.move(Direction.UP);
-        }else if (myAgent.getX() < myGold.getGoldX()){
-            myAgent.move(Direction.RIGHT);
+        int[] posWumpus = board.getCaseContent(Content.WUMPUS);
+        int[] posWumpusX = new int[0];
+        int[] posWumpusY = new int[0];
+
+        for (int i = 0; i < posWumpus.length / 2; i++) {
+            posWumpusX[i] += posWumpus[i];
         }
-        return toursUtilises;
+
+        for (int i = posWumpus.length / 2; i < posWumpus.length; i++) {
+            posWumpusY[i] += posWumpus[i];
+        }
+
+//
+//        if (posWumpus = ){
+//
+//        }else if (myAgent.getY() < myGold.getGoldY()){
+//            myAgent.move(Direction.UP);
+//            toursUtilises += 1;
+//        }else if (myAgent.getX() < myGold.getGoldX()){
+//            myAgent.move(Direction.RIGHT);
+//            toursUtilises += 1;
+//        }
+//        return toursUtilises;
+        return 0;
     }
 }
