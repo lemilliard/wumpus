@@ -25,6 +25,8 @@ public class Game extends JFrame implements KeyListener {
 
     private static final String DIRECTION = "Direction";
 
+    private static final String CASE = "Case";
+
     private final Board board;
 
     private final Mode mode;
@@ -32,7 +34,7 @@ public class Game extends JFrame implements KeyListener {
     private final int exploration;
 
     private final int balls;
-    
+
     private final int gonzesse;
 
     private int rounds = 0;
@@ -43,12 +45,12 @@ public class Game extends JFrame implements KeyListener {
 
     private PathFinder pathFinder;
 
-    public Game(Board board, Mode mode, int balls) {
+    public Game(Board board, Mode mode, int balls, int gonzesse) {
         this.board = board;
         this.mode = mode;
         this.exploration = 10;
         this.balls = balls / 10;
-        this.gonzesse = (10 - this.balls);
+        this.gonzesse = gonzesse / 10;
         this.pathFinder = new PathFinder(board);
         initWindow();
         initDecisionTree();
@@ -78,11 +80,8 @@ public class Game extends JFrame implements KeyListener {
             Weight.WUMPUS.name(),
             Weight.VISITED.name()
         };
-        config.addAttribut(LEFT.name(), params);
-        config.addAttribut(RIGHT.name(), params);
-        config.addAttribut(UP.name(), params);
-        config.addAttribut(DOWN.name(), params);
-        config.addAttribut(DIRECTION, LEFT.name(), RIGHT.name(), UP.name(), DOWN.name());
+        config.addAttribut(CASE, params);
+//        config.addAttribut(DIRECTION, LEFT.name(), RIGHT.name(), UP.name(), DOWN.name());
 
         config.addDecision("Vivant");
         config.addDecision("Mort");
@@ -98,12 +97,13 @@ public class Game extends JFrame implements KeyListener {
         refresh();
         setVisible(true);
         if (mode.equals(Mode.AUTO)) {
-            while (true) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//            while (true) {
+            while (death + win < 500) {
+//                try {
+//                    Thread.sleep(500);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
                 if (rounds > 200) {
                     death++;
                     System.out.println("L'agent est décédé...");
@@ -124,7 +124,7 @@ public class Game extends JFrame implements KeyListener {
         board.regenerate();
         refresh();
         try {
-            Thread.sleep(500);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -136,7 +136,7 @@ public class Game extends JFrame implements KeyListener {
         // Cases autour de l'agent
         HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
 
-	    Direction direction;
+        Direction direction;
         Stack<Case> pathFinded = pathFinder.findPath();
         Stack<Case> pathFindedCloned = new Stack<>();
         pathFindedCloned.clone(pathFinded);
@@ -173,18 +173,21 @@ public class Game extends JFrame implements KeyListener {
 
         // Initialisation de l'entry
         HashMap<String, String> entry = new HashMap<>();
-        for (Direction dir : Direction.values()) {
-            if (!casesAround.get(dir).getWeight().equals(Weight.WALL)) {
-                entry.put(dir.name(), casesAround.get(dir).getWeight().name());
-            }
-        }
+//        for (Direction dir : Direction.values()) {
+//            if (!casesAround.get(dir).getWeight().equals(Weight.WALL)) {
+//                entry.put(dir.name(), casesAround.get(dir).getWeight().name());
+//            }
+//        }
 
         // Utiliser l'arbre de décision
         Result result;
         List<PossibleChoice> possibleChoices = new ArrayList<>();
         int i = 0;
         while (i < directionsPossibles.size()) {
-            entry.put(DIRECTION, directionsPossibles.get(i).name());
+            if (!casesAround.get(directionsPossibles.get(i)).getWeight().equals(Weight.WALL)) {
+                entry.put(CASE, casesAround.get(directionsPossibles.get(i)).getWeight().name());
+            }
+//            entry.put(DIRECTION, directionsPossibles.get(i).name());
             result = DecisionTree.decide(entry);
             // Gestion du ratio
             if (result != null) {
@@ -193,36 +196,37 @@ public class Game extends JFrame implements KeyListener {
                 verifierSafe(possibleChoices, result, directionsPossibles.get(i));
                 if (result.getValue().equals("Vivant")) {
                     //Si la case à deja ete visité on l'ajoute une seule fois sinon on ajoute la possibilité normalement
-                    if (!explore(possibleChoices, result, directionsPossibles.get(i)) && (ratio * 10) > gonzesse) {
+                    if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
+//                    if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
                         for (int j = 0; j < (int) (ratio * 10); j++) {
                             possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
                         }
                     }
-//                } else {
-//                    if(ratio <= 0.6){
-//                        for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
-//                            possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-//                        }
-//                    }
+                } else {
+                    for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
+                        possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                    }
                 }
             } else {
+                possibleChoices.removeAll(possibleChoices);
                 possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                i = directionsPossibles.size();
             }
-            entry.remove(DIRECTION);
+//            entry.remove(DIRECTION);
             i++;
         }
 
-		// Process result
-		Direction choice;
-		Randomizer randomizer;
-		if (possibleChoices.isEmpty()) {
-			randomizer = new Randomizer(0, directionsPossibles.size() - 1);
-			choice = directionsPossibles.get(randomizer.randomize());
-		} else {
-			randomizer = new Randomizer(0, possibleChoices.size() - 1);
-			choice = possibleChoices.get(randomizer.randomize()).getChoice();
-		}
-		entry.put(DIRECTION, choice.name());
+        // Process result
+        Direction choice;
+        Randomizer randomizer;
+        if (possibleChoices.isEmpty()) {
+            randomizer = new Randomizer(0, directionsPossibles.size() - 1);
+            choice = directionsPossibles.get(randomizer.randomize());
+        } else {
+            randomizer = new Randomizer(0, possibleChoices.size() - 1);
+            choice = possibleChoices.get(randomizer.randomize()).getChoice();
+        }
+//        entry.put(DIRECTION, choice.name());
 
         // Incrémente les tours et process result
         rounds += processDirection(choice);
@@ -235,7 +239,7 @@ public class Game extends JFrame implements KeyListener {
     }
 
     public void refresh() {
-        getGame().refresh();
+//        getGame().refresh();
     }
 
     private int processDirection(Direction treeResult) {
@@ -380,7 +384,7 @@ public class Game extends JFrame implements KeyListener {
 
     private void updateGameState(HashMap<String, String> entry) {
         // Vérifie l'état du jeu
-        System.out.println("Tour " + rounds);
+//        System.out.println("Tour " + rounds);
 
         int result;
         if (board.getAgent().isAlive()) {
@@ -404,6 +408,7 @@ public class Game extends JFrame implements KeyListener {
     }
 
     private void displayResult() {
+        System.out.println("Nombre de tours : " + rounds);
         System.out.println("Nombre de morts: " + death);
         System.out.println("Nombre de victoires: " + win);
         System.out.println("Nombre de parties: " + (win + death));

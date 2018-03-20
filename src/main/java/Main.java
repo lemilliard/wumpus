@@ -10,7 +10,7 @@ public class Main {
 	public static void main(String[] args) {
 		Board board = new Board(5, 5, 15);
 
-		Game game = new Game(board, AUTO, 20);
+		Game game = new Game(board, AUTO, 10, 80);
 		game.play();
 	}
 }

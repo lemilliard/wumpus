@@ -66,14 +66,14 @@ public class Agent {
 		int toursUtilises = 1;
 		if (!direction.equals(this.direction)) {
 			toursUtilises++;
-			System.out.println("L'agent se tourne");
+//			System.out.println("L'agent se tourne");
 		}
 		if (direction.getOpposite().equals(this.direction)) {
 			toursUtilises++;
-			System.out.println("L'agent se tourne encore");
+//			System.out.println("L'agent se tourne encore");
 		}
 		this.direction = direction;
-		System.out.println("L'agent va vers " + direction);
+//		System.out.println("L'agent va vers " + direction);
 		switch (direction) {
 			case UP:
 				move(x, y + 1);
