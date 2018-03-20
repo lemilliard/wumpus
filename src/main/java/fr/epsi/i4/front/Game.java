@@ -21,196 +21,195 @@ import static fr.epsi.i4.back.model.board.Direction.*;
 
 public class Game extends JFrame implements KeyListener {
 
-    public static final int caseSize = 100;
+	public static final int caseSize = 100;
 
-    private static final String DIRECTION = "Direction";
+	private static final String DIRECTION = "Direction";
 
-    private final Board board;
+	private final Board board;
 
-    private final Mode mode;
+	private final Mode mode;
 
-    private final int exploration;
+	private final int exploration;
 
-    private final int balls;
-    
-    private final int gonzesse;
+	private final int balls;
 
-    private int rounds = 0;
+	private final int gonzesse;
 
-    private int win = 0;
+	private int rounds = 0;
 
-    private int death = 0;
+	private int win = 0;
 
-    private PathFinder pathFinder;
+	private int death = 0;
 
-    public Game(Board board, Mode mode, int balls) {
-        this.board = board;
-        this.mode = mode;
-        this.exploration = 10;
-        this.balls = balls / 10;
-        this.gonzesse = (10 - this.balls);
-        this.pathFinder = new PathFinder(board);
-        initWindow();
-        initDecisionTree();
-    }
+	private PathFinder pathFinder;
 
-    private void initWindow() {
-        setTitle("Wumpus");
-        setSize(board.getWidth() * caseSize, board.getHeight() * caseSize);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setContentPane(new FrontGame(board));
-        addKeyListener(this);
-        setFocusable(true);
-        setFocusTraversalKeysEnabled(false);
-    }
+	public Game(Board board, Mode mode, int balls) {
+		this.board = board;
+		this.mode = mode;
+		this.exploration = 10;
+		this.balls = balls / 10;
+		this.gonzesse = (10 - this.balls);
+		this.pathFinder = new PathFinder(board);
+		initWindow();
+		initDecisionTree();
+	}
 
-    private void initDecisionTree() {
-        Config config = new Config("./decisionTree");
+	private void initWindow() {
+		setTitle("Wumpus");
+		setSize(board.getWidth() * caseSize, board.getHeight() * caseSize);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setContentPane(new FrontGame(board));
+		addKeyListener(this);
+		setFocusable(true);
+		setFocusTraversalKeysEnabled(false);
+	}
+
+	private void initDecisionTree() {
+		Config config = new Config("./decisionTree");
 //		config.addAttribut("Actuelle", Weight.getNames());
-        String[] params = new String[]{
-            Weight.SAFE.name(),
-            Weight.DEFAULT.name(),
-            Weight.POSSIBLE_PIT.name(),
-            Weight.POSSIBLE_WUMPUS.name(),
-            Weight.PIT.name(),
-            Weight.POSSIBLE_PIT_OR_WUMPUS.name(),
-            Weight.WUMPUS.name(),
-            Weight.VISITED.name()
-        };
-        config.addAttribut(LEFT.name(), params);
-        config.addAttribut(RIGHT.name(), params);
-        config.addAttribut(UP.name(), params);
-        config.addAttribut(DOWN.name(), params);
-        config.addAttribut(DIRECTION, LEFT.name(), RIGHT.name(), UP.name(), DOWN.name());
+		String[] params = new String[]{
+				Weight.SAFE.name(),
+				Weight.DEFAULT.name(),
+				Weight.POSSIBLE_PIT.name(),
+				Weight.POSSIBLE_WUMPUS.name(),
+				Weight.PIT.name(),
+				Weight.POSSIBLE_PIT_OR_WUMPUS.name(),
+				Weight.WUMPUS.name(),
+				Weight.VISITED.name()
+		};
+		config.addAttribut(LEFT.name(), params);
+		config.addAttribut(RIGHT.name(), params);
+		config.addAttribut(UP.name(), params);
+		config.addAttribut(DOWN.name(), params);
+		config.addAttribut(DIRECTION, LEFT.name(), RIGHT.name(), UP.name(), DOWN.name());
 
-        config.addDecision("Vivant");
-        config.addDecision("Mort");
+		config.addDecision("Vivant");
+		config.addDecision("Mort");
 
-        DecisionTree.init(config);
-    }
+		DecisionTree.init(config);
+	}
 
-    public FrontGame getGame() {
-        return (FrontGame) getContentPane();
-    }
+	public FrontGame getGame() {
+		return (FrontGame) getContentPane();
+	}
 
-    public void play() {
-        refresh();
-        setVisible(true);
-        if (mode.equals(Mode.AUTO)) {
-            while (true) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (rounds > 200) {
-                    death++;
-                    System.out.println("L'agent est décédé...");
-                    reset();
-                } else {
-                    playRound();
-                }
-            }
-        }
-    }
+	public void play() {
+		refresh();
+		setVisible(true);
+		if (mode.equals(Mode.AUTO)) {
+			while (win + death < 500) {
+//                try {
+//                    Thread.sleep(500);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+				if (rounds > 200) {
+					death++;
+					System.out.println("L'agent est décédé...");
+					reset();
+				} else {
+					playRound();
+				}
+			}
+		}
+	}
 
-    public void reset() {
-        displayResult();
-        System.out.println("------------------------");
-        System.out.println("New Game");
-        System.out.println("------------------------");
-        rounds = 0;
-        board.regenerate();
-        refresh();
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+	public void reset() {
+		displayResult();
+		System.out.println("------------------------");
+		System.out.println("New Game");
+		System.out.println("------------------------");
+		rounds = 0;
+		board.regenerate();
+		refresh();
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
-    private void playRound() {
+	private void playRound() {
 //        System.out.println(board.toString());
 
-        // Cases autour de l'agent
-        HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
+		// Cases autour de l'agent
+		HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
 
-	    Direction direction;
-        Stack<Case> pathFinded = pathFinder.findPath();
-        Stack<Case> pathFindedCloned = new Stack<>();
-        pathFindedCloned.clone(pathFinded);
-        // pathFinded[0] correspond à la case actuelle donc on ne prends pas en compte ce deplacement
-        while (pathFinded.size() > 1) {
-            try {
-                rounds += processDirection(board.getDirectionByCase(pathFinded.antePop()));
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-                System.out.println(pathFinded.toString());
-                System.out.println(pathFindedCloned.toString());
-            }
-            refresh();
-        }
+		Direction direction;
+		Stack<Case> pathFinded = pathFinder.findPath();
+		Stack<Case> pathFindedCloned = new Stack<>();
+		pathFindedCloned.clone(pathFinded);
+		// pathFinded[0] correspond à la case actuelle donc on ne prends pas en compte ce deplacement
+		while (pathFinded.size() > 1) {
+			try {
+				rounds += processDirection(board.getDirectionByCase(pathFinded.antePop()));
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+				System.out.println(pathFinded.toString());
+				System.out.println(pathFindedCloned.toString());
+			}
+			refresh();
+		}
 
-        // Défini les directions possibles
-        List<Direction> directionsPossibles = new ArrayList<>();
-        if (board.getAgent().getX() > 1 && board.getAgent().getCasesAround().get(LEFT).isMegaSafe()) {
-            directionsPossibles.add(LEFT);
-        }
-        if (board.getAgent().getCasesAround().get(RIGHT).isMegaSafe()) {
-            directionsPossibles.add(RIGHT);
-        }
-        if (board.getAgent().getCasesAround().get(UP).isMegaSafe()) {
-            directionsPossibles.add(UP);
-        }
-        if (board.getAgent().getY() > 1 && board.getAgent().getCasesAround().get(DOWN).isMegaSafe()) {
-            directionsPossibles.add(Direction.DOWN);
-        }
+		// Défini les directions possibles
+		List<Direction> directionsPossibles = new ArrayList<>();
+		if (board.getAgent().getX() > 1 && board.getAgent().getCasesAround().get(LEFT).isMegaSafe()) {
+			directionsPossibles.add(LEFT);
+		}
+		if (board.getAgent().getCasesAround().get(RIGHT).isMegaSafe()) {
+			directionsPossibles.add(RIGHT);
+		}
+		if (board.getAgent().getCasesAround().get(UP).isMegaSafe()) {
+			directionsPossibles.add(UP);
+		}
+		if (board.getAgent().getY() > 1 && board.getAgent().getCasesAround().get(DOWN).isMegaSafe()) {
+			directionsPossibles.add(Direction.DOWN);
+		}
 
-        if (board.getAgent().getBackCounter() > 0) {
-            directionsPossibles.remove(board.getAgent().getDirection().getOpposite());
-        }
+		if (board.getAgent().getBackCounter() > 0) {
+			directionsPossibles.remove(board.getAgent().getDirection().getOpposite());
+		}
 
-        // Initialisation de l'entry
-        HashMap<String, String> entry = new HashMap<>();
-        for (Direction dir : Direction.values()) {
-            if (!casesAround.get(dir).getWeight().equals(Weight.WALL)) {
-                entry.put(dir.name(), casesAround.get(dir).getWeight().name());
-            }
-        }
+		// Initialisation de l'entry
+		HashMap<String, String> entry = new HashMap<>();
+		for (Direction dir : Direction.values()) {
+			if (!casesAround.get(dir).getWeight().equals(Weight.WALL)) {
+				entry.put(dir.name(), casesAround.get(dir).getWeight().name());
+			}
+		}
 
-        // Utiliser l'arbre de décision
-        Result result;
-        List<PossibleChoice> possibleChoices = new ArrayList<>();
-        int i = 0;
-        while (i < directionsPossibles.size()) {
-            entry.put(DIRECTION, directionsPossibles.get(i).name());
-            result = DecisionTree.decide(entry);
-            // Gestion du ratio
-            if (result != null) {
-                double ratio = result.getRatio();
-//                explore(possibleChoices, result, directionsPossibles.get(i));
-                verifierSafe(possibleChoices, result, directionsPossibles.get(i));
-                if (result.getValue().equals("Vivant")) {
-                    //Si la case à deja ete visité on l'ajoute une seule fois sinon on ajoute la possibilité normalement
-                    if (!explore(possibleChoices, result, directionsPossibles.get(i)) && (ratio * 10) > gonzesse) {
-                        for (int j = 0; j < (int) (ratio * 10); j++) {
-                            possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-                        }
-                    }
-//                } else {
-//                    if(ratio <= 0.6){
-//                        for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
-//                            possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-//                        }
-//                    }
-                }
-            } else {
-                possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-            }
-            entry.remove(DIRECTION);
-            i++;
-        }
+		// Utiliser l'arbre de décision
+		Result result;
+		List<PossibleChoice> possibleChoices = new ArrayList<>();
+		int i = 0;
+		while (i < directionsPossibles.size()) {
+			entry.put(DIRECTION, directionsPossibles.get(i).name());
+			result = DecisionTree.decide(entry);
+			// Gestion du ratio
+			if (result != null) {
+				double ratio = result.getRatio();
+				verifierSafe(possibleChoices, result, directionsPossibles.get(i));
+				if (result.getValue().equals("Vivant")) {
+					//Si la case à deja ete visité on l'ajoute une seule fois sinon on ajoute la possibilité normalement
+					if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
+						for (int j = 0; j < (int) (ratio * 10); j++) {
+							possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+						}
+					}
+				} else {
+					for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
+						possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+					}
+				}
+			} else {
+				possibleChoices.removeAll(possibleChoices);
+				possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+				i = directionsPossibles.size();
+			}
+			entry.remove(DIRECTION);
+			i++;
+		}
 
 		// Process result
 		Direction choice;
@@ -224,190 +223,190 @@ public class Game extends JFrame implements KeyListener {
 		}
 		entry.put(DIRECTION, choice.name());
 
-        // Incrémente les tours et process result
-        rounds += processDirection(choice);
+		// Incrémente les tours et process result
+		rounds += processDirection(choice);
 
-        // Mise à jour de l'état du jeu
-        updateGameState(entry);
+		// Mise à jour de l'état du jeu
+		updateGameState(entry);
 
-        // Mise à jour de l'affichage
-        refresh();
-    }
+		// Mise à jour de l'affichage
+		refresh();
+	}
 
-    public void refresh() {
-        getGame().refresh();
-    }
+	public void refresh() {
+		//getGame().refresh();
+	}
 
-    private int processDirection(Direction treeResult) {
-        Agent agent = board.getAgent();
-        return agent.move(treeResult);
-    }
+	private int processDirection(Direction treeResult) {
+		Agent agent = board.getAgent();
+		return agent.move(treeResult);
+	}
 
-    private boolean verifierSafe(List<PossibleChoice> possibleChoices, Result result, Direction direction) {
-        int x = board.getAgent().getX();
-        int y = board.getAgent().getY();
-        boolean isSaferThanSomethingElse = false;
-        switch (direction) {
-            case UP:
-                if (board.getCase(x, y + 1).getWeight().equals(Weight.SAFE)) {
-                    for (int j = 0; j < exploration; j++) {
-                        possibleChoices.add(new PossibleChoice(result, direction));
-                    }
-                    isSaferThanSomethingElse = true;
-                }
-                break;
-            case DOWN:
-                if (board.getCase(x, y - 1).getWeight().equals(Weight.SAFE)) {
-                    for (int j = 0; j < exploration; j++) {
-                        possibleChoices.add(new PossibleChoice(result, direction));
-                    }
-                    isSaferThanSomethingElse = true;
-                }
-                break;
-            case LEFT:
-                if (board.getCase(x - 1, y).getWeight().equals(Weight.SAFE)) {
-                    for (int j = 0; j < exploration; j++) {
-                        possibleChoices.add(new PossibleChoice(result, direction));
-                    }
-                    isSaferThanSomethingElse = true;
-                }
-                break;
-            case RIGHT:
-                if (board.getCase(x + 1, y).getWeight().equals(Weight.SAFE)) {
-                    for (int j = 0; j < exploration; j++) {
-                        possibleChoices.add(new PossibleChoice(result, direction));
-                    }
-                    isSaferThanSomethingElse = true;
-                }
-                break;
-        }
-        return isSaferThanSomethingElse;
-    }
+	private boolean verifierSafe(List<PossibleChoice> possibleChoices, Result result, Direction direction) {
+		int x = board.getAgent().getX();
+		int y = board.getAgent().getY();
+		boolean isSaferThanSomethingElse = false;
+		switch (direction) {
+			case UP:
+				if (board.getCase(x, y + 1).getWeight().equals(Weight.SAFE)) {
+					for (int j = 0; j < exploration; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					isSaferThanSomethingElse = true;
+				}
+				break;
+			case DOWN:
+				if (board.getCase(x, y - 1).getWeight().equals(Weight.SAFE)) {
+					for (int j = 0; j < exploration; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					isSaferThanSomethingElse = true;
+				}
+				break;
+			case LEFT:
+				if (board.getCase(x - 1, y).getWeight().equals(Weight.SAFE)) {
+					for (int j = 0; j < exploration; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					isSaferThanSomethingElse = true;
+				}
+				break;
+			case RIGHT:
+				if (board.getCase(x + 1, y).getWeight().equals(Weight.SAFE)) {
+					for (int j = 0; j < exploration; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					isSaferThanSomethingElse = true;
+				}
+				break;
+		}
+		return isSaferThanSomethingElse;
+	}
 
-    private boolean explore(List<PossibleChoice> possibleChoices, Result result, Direction direction) {
-        int x = board.getAgent().getX();
-        int y = board.getAgent().getY();
-        boolean toExplore = false;
-        switch (direction) {
-            case UP:
-                if (board.getCase(x, y + 1).getWeight().equals(Weight.VISITED)) {
-                    for (int j = 0; j < balls; j++) {
-                        possibleChoices.add(new PossibleChoice(result, direction));
-                    }
-                    toExplore = true;
-                }
-                break;
-            case DOWN:
-                if (board.getCase(x, y - 1).getWeight().equals(Weight.VISITED)) {
-                    for (int j = 0; j < balls; j++) {
-                        possibleChoices.add(new PossibleChoice(result, direction));
-                    }
-                    toExplore = true;
-                }
-                break;
-            case LEFT:
-                if (board.getCase(x - 1, y).getWeight().equals(Weight.VISITED)) {
-                    for (int j = 0; j < balls; j++) {
-                        possibleChoices.add(new PossibleChoice(result, direction));
-                    }
-                    toExplore = true;
-                }
-                break;
-            case RIGHT:
-                if (board.getCase(x + 1, y).getWeight().equals(Weight.VISITED)) {
-                    for (int j = 0; j < balls; j++) {
-                        possibleChoices.add(new PossibleChoice(result, direction));
-                    }
-                    toExplore = true;
-                }
-                break;
-        }
-        return toExplore;
-    }
+	private boolean explore(List<PossibleChoice> possibleChoices, Result result, Direction direction) {
+		int x = board.getAgent().getX();
+		int y = board.getAgent().getY();
+		boolean toExplore = false;
+		switch (direction) {
+			case UP:
+				if (board.getCase(x, y + 1).getWeight().equals(Weight.VISITED)) {
+					for (int j = 0; j < balls; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					toExplore = true;
+				}
+				break;
+			case DOWN:
+				if (board.getCase(x, y - 1).getWeight().equals(Weight.VISITED)) {
+					for (int j = 0; j < balls; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					toExplore = true;
+				}
+				break;
+			case LEFT:
+				if (board.getCase(x - 1, y).getWeight().equals(Weight.VISITED)) {
+					for (int j = 0; j < balls; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					toExplore = true;
+				}
+				break;
+			case RIGHT:
+				if (board.getCase(x + 1, y).getWeight().equals(Weight.VISITED)) {
+					for (int j = 0; j < balls; j++) {
+						possibleChoices.add(new PossibleChoice(result, direction));
+					}
+					toExplore = true;
+				}
+				break;
+		}
+		return toExplore;
+	}
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-        if (mode.equals(Mode.MANUAL)) {
-            Direction direction = null;
-            switch (e.getKeyCode()) {
-                case 37:
-                    direction = LEFT;
-                    break;
-                case 39:
-                    direction = RIGHT;
-                    break;
-                case 38:
-                    direction = UP;
-                    break;
-                case 40:
-                    direction = DOWN;
-                    break;
-            }
-            if (direction != null) {
-                // Cases autour de l'agent
-                HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if (mode.equals(Mode.MANUAL)) {
+			Direction direction = null;
+			switch (e.getKeyCode()) {
+				case 37:
+					direction = LEFT;
+					break;
+				case 39:
+					direction = RIGHT;
+					break;
+				case 38:
+					direction = UP;
+					break;
+				case 40:
+					direction = DOWN;
+					break;
+			}
+			if (direction != null) {
+				// Cases autour de l'agent
+				HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
 
-                // Ajout de l'entry dans l'arbre
-                HashMap<String, String> entry = new HashMap<>();
-                for (Direction dir : Direction.values()) {
-                    if (!casesAround.get(dir).getWeight().equals(Weight.WALL)) {
-                        entry.put(dir.name(), casesAround.get(dir).getWeight().name());
-                    }
-                }
-                entry.put(DIRECTION, direction.name());
+				// Ajout de l'entry dans l'arbre
+				HashMap<String, String> entry = new HashMap<>();
+				for (Direction dir : Direction.values()) {
+					if (!casesAround.get(dir).getWeight().equals(Weight.WALL)) {
+						entry.put(dir.name(), casesAround.get(dir).getWeight().name());
+					}
+				}
+				entry.put(DIRECTION, direction.name());
 
-                // Déplacement
-                rounds += processDirection(direction);
+				// Déplacement
+				rounds += processDirection(direction);
 
-                // Mise à jour de l'affichage
-                refresh();
+				// Mise à jour de l'affichage
+				refresh();
 
-                // Mise à jour de l'état du jeu
-                updateGameState(entry);
+				// Mise à jour de l'état du jeu
+				updateGameState(entry);
 
-            }
-            e.consume();
-        }
-    }
+			}
+			e.consume();
+		}
+	}
 
-    private void updateGameState(HashMap<String, String> entry) {
-        // Vérifie l'état du jeu
-        System.out.println("Tour " + rounds);
+	private void updateGameState(HashMap<String, String> entry) {
+		// Vérifie l'état du jeu
+		System.out.println("Tour " + rounds);
 
-        int result;
-        if (board.getAgent().isAlive()) {
-            result = 0;
-        } else {
-            result = 1;
-        }
-        DecisionTree.addData(entry, result);
+		int result;
+		if (board.getAgent().isAlive()) {
+			result = 0;
+		} else {
+			result = 1;
+		}
+		DecisionTree.addData(entry, result);
 //		DecisionTree.print();
-        DecisionTree.save();
+		DecisionTree.save();
 
-        if (!board.getAgent().isAlive()) {
-            death++;
-            System.out.println("L'agent est décédé...");
-            reset();
-        } else if (board.getAgent().hasGold()) {
-            win++;
-            System.out.println("L'agent a récupéré l'or!!");
-            reset();
-        }
-    }
+		if (!board.getAgent().isAlive()) {
+			death++;
+			System.out.println("L'agent est décédé...");
+			reset();
+		} else if (board.getAgent().hasGold()) {
+			win++;
+			System.out.println("L'agent a récupéré l'or!!");
+			reset();
+		}
+	}
 
-    private void displayResult() {
-        System.out.println("Nombre de morts: " + death);
-        System.out.println("Nombre de victoires: " + win);
-        System.out.println("Nombre de parties: " + (win + death));
-        float winRate = (float) win / (float) (win + death) * 100.0f;
-        System.out.println("Pourcentage de victoire: " + winRate + "%");
-    }
+	private void displayResult() {
+		System.out.println("Nombre de morts: " + death);
+		System.out.println("Nombre de victoires: " + win);
+		System.out.println("Nombre de parties: " + (win + death));
+		float winRate = (float) win / (float) (win + death) * 100.0f;
+		System.out.println("Pourcentage de victoire: " + winRate + "%");
+	}
 }
