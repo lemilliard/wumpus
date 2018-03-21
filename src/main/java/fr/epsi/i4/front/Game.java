@@ -35,7 +35,7 @@ public class Game extends JFrame implements KeyListener {
 
     private final int balls;
 
-    private final int gonzesse;
+    private final int gentleman;
 
     private int rounds = 0;
 
@@ -48,9 +48,9 @@ public class Game extends JFrame implements KeyListener {
     public Game(Board board, Mode mode, int balls, int gonzesse) {
         this.board = board;
         this.mode = mode;
-        this.exploration = 10;
+        this.exploration = 5;
         this.balls = balls / 10;
-        this.gonzesse = gonzesse / 10;
+        this.gentleman = gonzesse / 10;
         this.pathFinder = new PathFinder(board);
         initWindow();
         initDecisionTree();
@@ -75,9 +75,9 @@ public class Game extends JFrame implements KeyListener {
             Weight.DEFAULT.name(),
             Weight.POSSIBLE_PIT.name(),
             Weight.POSSIBLE_WUMPUS.name(),
-            Weight.PIT.name(),
+//            Weight.PIT.name(),
             Weight.POSSIBLE_PIT_OR_WUMPUS.name(),
-            Weight.WUMPUS.name(),
+//            Weight.WUMPUS.name(),
             Weight.VISITED.name()
         };
         config.addAttribut(CASE, params);
@@ -131,12 +131,6 @@ public class Game extends JFrame implements KeyListener {
     }
 
     private void playRound() {
-//        System.out.println(board.toString());
-
-        // Cases autour de l'agent
-        HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
-
-        Direction direction;
         Stack<Case> pathFinded = pathFinder.findPath();
         Stack<Case> pathFindedCloned = new Stack<>();
         pathFindedCloned.clone(pathFinded);
@@ -151,7 +145,9 @@ public class Game extends JFrame implements KeyListener {
             }
             refresh();
         }
-
+        // Cases autour de l'agent
+        HashMap<Direction, Case> casesAround = board.getAgent().getCasesAround();
+        
         // Défini les directions possibles
         List<Direction> directionsPossibles = new ArrayList<>();
         if (board.getAgent().getX() > 1 && board.getAgent().getCasesAround().get(LEFT).isMegaSafe()) {
@@ -173,61 +169,69 @@ public class Game extends JFrame implements KeyListener {
 
         // Initialisation de l'entry
         HashMap<String, String> entry = new HashMap<>();
-//        for (Direction dir : Direction.values()) {
-//            if (!casesAround.get(dir).getWeight().equals(Weight.WALL)) {
-//                entry.put(dir.name(), casesAround.get(dir).getWeight().name());
-//            }
-//        }
 
         // Utiliser l'arbre de décision
         Result result;
         List<PossibleChoice> possibleChoices = new ArrayList<>();
+        PossibleChoice decisionArbre = null;
         int i = 0;
+        double ratioMax = 0;
         while (i < directionsPossibles.size()) {
-            if (!casesAround.get(directionsPossibles.get(i)).getWeight().equals(Weight.WALL)) {
-                entry.put(CASE, casesAround.get(directionsPossibles.get(i)).getWeight().name());
-            }
-//            entry.put(DIRECTION, directionsPossibles.get(i).name());
+            entry.put(CASE, casesAround.get(directionsPossibles.get(i)).getWeight().name());
+
             result = DecisionTree.decide(entry);
             // Gestion du ratio
-            if (result != null) {
-                double ratio = result.getRatio();
-//                explore(possibleChoices, result, directionsPossibles.get(i));
-                verifierSafe(possibleChoices, result, directionsPossibles.get(i));
-                if (result.getValue().equals("Vivant")) {
-                    //Si la case à deja ete visité on l'ajoute une seule fois sinon on ajoute la possibilité normalement
-                    if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
-//                    if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
-                        for (int j = 0; j < (int) (ratio * 10); j++) {
-                            possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+
+            verifierSafe(possibleChoices, result, directionsPossibles.get(i));
+            if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
+
+                if (result != null) {
+                    double ratio = result.getRatio();
+                    if (result.getValue().equals("Vivant")) {
+                        //Si la case à deja ete visité on l'ajoute une seule fois sinon on ajoute la possibilité normalement
+                        if (ratioMax < ratio) {
+                            ratioMax = ratio;
+                            decisionArbre = new PossibleChoice(result, directionsPossibles.get(i));
+                        }
+                    } else {
+                        if (ratioMax < 1 - ratio) {
+                            ratioMax = 1 - ratio;
+                            decisionArbre = new PossibleChoice(result, directionsPossibles.get(i));
                         }
                     }
                 } else {
-                    for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
-                        possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-                    }
+                    System.out.println("C'EST NULL !!!");
+                    possibleChoices.removeAll(possibleChoices);
+                    possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                    i = directionsPossibles.size();
                 }
-            } else {
-                possibleChoices.removeAll(possibleChoices);
-                possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-                i = directionsPossibles.size();
             }
-//            entry.remove(DIRECTION);
+            
             i++;
+        }
+
+        if (decisionArbre != null) {
+            System.out.println(decisionArbre.getResult().getRatio());
+            possibleChoices.add(decisionArbre);
         }
 
         // Process result
         Direction choice;
         Randomizer randomizer;
         if (possibleChoices.isEmpty()) {
+            System.out.println("Random !!!!");
             randomizer = new Randomizer(0, directionsPossibles.size() - 1);
             choice = directionsPossibles.get(randomizer.randomize());
         } else {
             randomizer = new Randomizer(0, possibleChoices.size() - 1);
             choice = possibleChoices.get(randomizer.randomize()).getChoice();
         }
-//        entry.put(DIRECTION, choice.name());
-
+            if(casesAround.get(choice).getWeight().equals(Weight.WALL)){
+                HashMap<Direction, Case> casesAround2 = board.getAgent().getCasesAround();
+                System.out.println(casesAround.toString());
+                System.out.println(casesAround2.toString());
+            }
+        
         // Incrémente les tours et process result
         rounds += processDirection(choice);
 
@@ -392,6 +396,7 @@ public class Game extends JFrame implements KeyListener {
         } else {
             result = 1;
         }
+//        System.out.println(entry.toString());
         DecisionTree.addData(entry, result);
 //		DecisionTree.print();
         DecisionTree.save();
