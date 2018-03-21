@@ -6,6 +6,7 @@ import fr.epsi.i4.back.model.board.content.Gold;
 import fr.epsi.i4.back.model.board.content.Weight;
 import fr.epsi.i4.util.Randomizer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
