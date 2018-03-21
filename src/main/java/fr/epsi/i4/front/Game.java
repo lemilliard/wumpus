@@ -43,12 +43,17 @@ public class Game extends JFrame implements KeyListener {
 
 	private PathFinder pathFinder;
 
-	public Game(Board board, Mode mode, int balls) {
+	private DecisionTree decisionTree;
+
+	private int maxGames;
+
+	public Game(Board board, Mode mode, int balls, int maxGames) {
 		this.board = board;
 		this.mode = mode;
 		this.exploration = 10;
 		this.balls = balls / 10;
 		this.gonzesse = (10 - this.balls);
+		this.maxGames = maxGames;
 		this.pathFinder = new PathFinder(board);
 		initWindow();
 		initDecisionTree();
@@ -87,7 +92,7 @@ public class Game extends JFrame implements KeyListener {
 		config.addDecision("Vivant");
 		config.addDecision("Mort");
 
-		DecisionTree.init(config);
+		decisionTree = new DecisionTree(config);
 	}
 
 	public FrontGame getGame() {
@@ -98,7 +103,7 @@ public class Game extends JFrame implements KeyListener {
 		refresh();
 		setVisible(true);
 		if (mode.equals(Mode.AUTO)) {
-			while (win + death < 500) {
+			while (win + death < maxGames) {
 //                try {
 //                    Thread.sleep(500);
 //                } catch (InterruptedException e) {
@@ -112,6 +117,7 @@ public class Game extends JFrame implements KeyListener {
 					playRound();
 				}
 			}
+			System.exit(0);
 		}
 	}
 
@@ -123,11 +129,6 @@ public class Game extends JFrame implements KeyListener {
 		rounds = 0;
 		board.regenerate();
 		refresh();
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void playRound() {
@@ -185,7 +186,7 @@ public class Game extends JFrame implements KeyListener {
 		int i = 0;
 		while (i < directionsPossibles.size()) {
 			entry.put(DIRECTION, directionsPossibles.get(i).name());
-			result = DecisionTree.decide(entry);
+			result = decisionTree.decide(entry);
 			// Gestion du ratio
 			if (result != null) {
 				double ratio = result.getRatio();
@@ -387,9 +388,9 @@ public class Game extends JFrame implements KeyListener {
 		} else {
 			result = 1;
 		}
-		DecisionTree.addData(entry, result);
-//		DecisionTree.print();
-		DecisionTree.save();
+		decisionTree.addData(entry, result);
+//		decisionTree.print();
+		decisionTree.save();
 
 		if (!board.getAgent().isAlive()) {
 			death++;
