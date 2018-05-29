@@ -4,6 +4,7 @@ import fr.epsi.i4.back.model.Agent;
 import fr.epsi.i4.back.model.board.content.Content;
 import fr.epsi.i4.back.model.board.content.Gold;
 import fr.epsi.i4.back.model.board.content.Weight;
+import fr.epsi.i4.optimizedWay.Dijkstra;
 import fr.epsi.i4.util.Randomizer;
 
 import java.util.ArrayList;
@@ -132,6 +133,7 @@ public class Board {
 		}
 		// Ajout du Wumpus
 		addCaseContent(Content.WUMPUS, Content.STENCH);
+		Dijkstra dijkstra = new Dijkstra(this);
 	}
 
 	public void regenerate() {
@@ -146,13 +148,11 @@ public class Board {
 	}
 
 
-	public ArrayList<Case> getCaseContent(Content content){
+	public ArrayList<Case> getCaseContent(){
 		ArrayList<Case> posContent = new ArrayList<>();
-		for (int y = cases.length - 1; y > -1; y--) {
-			for (int x = cases.length - 1; x < cases[y].length; x++) {
-				if (doesCaseContainsContent(x, y, content)) {
-					posContent.add(getCase(x,y));
-				}
+		for (int y = 0; y < cases.length; y++) {
+			for (int x = 0; x < cases[y].length; x++) {
+				posContent.add(getCase(x,y));
 			}
 		}
 		return posContent;
