@@ -16,10 +16,16 @@ public class Case {
 
 	private int y;
 
+	private int id;
+
+	public static int nextId;
+
 	public Case(int x, int y) {
 		this.weight = Weight.DEFAULT;
 		this.x = x;
 		this.y = y;
+		this.id = nextId;
+		nextId++;
 		empty();
 	}
 
@@ -131,5 +137,9 @@ public class Case {
 
 	public boolean isMegaSafe() {
 		return !weight.equals(Weight.WALL) && !weight.equals(Weight.WUMPUS) && !weight.equals(Weight.PIT);
+	}
+
+	public int getId() {
+		return id;
 	}
 }

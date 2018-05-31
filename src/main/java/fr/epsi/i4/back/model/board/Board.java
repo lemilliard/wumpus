@@ -134,6 +134,7 @@ public class Board {
 		// Ajout du Wumpus
 		addCaseContent(Content.WUMPUS, Content.STENCH);
 		Dijkstra dijkstra = new Dijkstra(this);
+		Case.nextId = 0;
 	}
 
 	public void regenerate() {

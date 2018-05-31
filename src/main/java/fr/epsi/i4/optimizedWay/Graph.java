@@ -5,29 +5,26 @@ import java.util.ArrayList;
 public class Graph {
 	private Node[] nodes;
 	private int noOfNodes;
-	private Edge[] edges;
-	private ArrayList<Edge[]> listEdges;
+	//private Edge[] edges;
+	private ArrayList<Edge> listEdges;
 	private int noOfEdges;
 
-	public Graph(ArrayList<Edge[]> listEdges) {
+	public Graph(ArrayList<Edge> listEdges) {
 		this.listEdges = listEdges;
-		for (Edge[] list : listEdges) {
-			edges = listEdges.get(list.length);
-			// create all nodes ready to be updated with the edges
-			this.noOfNodes = calculateNoOfNodes(edges);
-			this.nodes = new Node[this.noOfNodes];
-			for (int n = 0; n < this.noOfNodes; n++) {
-				this.nodes[n] = new Node();
-			}
-			// add all the edges to the nodes, each edge added to two nodes (to and from)
-			this.noOfEdges = edges.length;
-			for (int edgeToAdd = 0; edgeToAdd < this.noOfEdges; edgeToAdd++) {
-				this.nodes[edges[edgeToAdd].getFromNodeIndex()].getEdges().add(edges[edgeToAdd]);
-				this.nodes[edges[edgeToAdd].getToNodeIndex()].getEdges().add(edges[edgeToAdd]);
-			}
+		// create all nodes ready to be updated with the edges
+		this.noOfNodes = calculateNoOfNodes(this.listEdges);
+		this.nodes = new Node[this.noOfNodes];
+		for (int n = 0; n < this.noOfNodes; n++) {
+			this.nodes[n] = new Node();
+		}
+		// add all the edges to the nodes, each edge added to two nodes (to and from)
+		this.noOfEdges = listEdges.size();
+		for (int edgeToAdd = 0; edgeToAdd < this.noOfEdges; edgeToAdd++) {
+			this.nodes[this.listEdges.get(edgeToAdd).getFromNodeIndex()].getEdges().add(this.listEdges.get(edgeToAdd));
+			this.nodes[this.listEdges.get(edgeToAdd).getToNodeIndex()].getEdges().add(this.listEdges.get(edgeToAdd));
 		}
 	}
-	private int calculateNoOfNodes(Edge[] edges) {
+	private int calculateNoOfNodes(ArrayList<Edge> edges) {
 		int noOfNodes = 0;
 		for (Edge e : edges) {
 			if (e.getToNodeIndex() > noOfNodes)
@@ -41,10 +38,10 @@ public class Graph {
 	// next video to implement the Dijkstra algorithm !!!
 	public void calculateShortestDistances() {
 		// node 0 as source
-		this.nodes[0].setDistanceFromSource(0);
-		int nextNode = 0;
+		this.nodes[8].setDistanceFromSource(0);
+		int nextNode = 8;
 		// visit every node
-		for (int i = 0; i < this.nodes.length; i++) {
+		for (int i = 8; i < this.nodes.length; i++) {
 			// loop around the edges of current node
 			ArrayList<Edge> currentNodeEdges = this.nodes[nextNode].getEdges();
 			for (int joinedEdge = 0; joinedEdge < currentNodeEdges.size(); joinedEdge++) {
@@ -67,7 +64,7 @@ public class Graph {
 	private int getNodeShortestDistanced() {
 		int storedNodeIndex = 0;
 		int storedDist = Integer.MAX_VALUE;
-		for (int i = 0; i < this.nodes.length; i++) {
+		for (int i = 8; i < this.nodes.length; i++) {
 			int currentDist = this.nodes[i].getDistanceFromSource();
 			if (!this.nodes[i].isVisited() && currentDist < storedDist) {
 				storedDist = currentDist;
@@ -77,13 +74,22 @@ public class Graph {
 		return storedNodeIndex;
 	}
 	// display result
-	public void printResult() {
+	public void printResult(int idGold) {
 		String output = "Number of nodes = " + this.noOfNodes;
 		output += "\nNumber of edges = " + this.noOfEdges;
-		for (int i = 0; i < this.nodes.length; i++) {
-			output += ("\nThe shortest distance from node 0 to node " + i + " is " + nodes[i].getDistanceFromSource());
+		for (int i = 8; i < this.nodes.length; i++) {
+			output += ("\nThe shortest distance from node 8 to node " + i + " is " + nodes[i].getDistanceFromSource());
 		}
 		System.out.println(output);
+
+		String outputGold = "";
+		for (int i = 8; i < this.nodes.length; i++) {
+			if (i == idGold) {
+				outputGold = "\nThe shortest distance from node 8 to node (Gold) " + i + " is " + nodes[i].getDistanceFromSource();
+			}
+		}
+		System.out.println(outputGold);
+		System.out.println("");
 	}
 	public Node[] getNodes() {
 		return nodes;
@@ -91,8 +97,8 @@ public class Graph {
 	public int getNoOfNodes() {
 		return noOfNodes;
 	}
-	public Edge[] getEdges() {
-		return edges;
+	public ArrayList<Edge> getEdges() {
+		return listEdges;
 	}
 	public int getNoOfEdges() {
 		return noOfEdges;
