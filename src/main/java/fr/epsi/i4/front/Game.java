@@ -235,7 +235,7 @@ public class Game extends JFrame implements KeyListener {
 	}
 
 	public void refresh() {
-		//getGame().refresh();
+		getGame().refresh();
 	}
 
 	private int processDirection(Direction treeResult) {

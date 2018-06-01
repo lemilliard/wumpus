@@ -148,17 +148,6 @@ public class Board {
 		getCase(x, y).addContent(content);
 	}
 
-
-	public ArrayList<Case> getCaseContent(){
-		ArrayList<Case> posContent = new ArrayList<>();
-		for (int y = 0; y < cases.length; y++) {
-			for (int x = 0; x < cases[y].length; x++) {
-				posContent.add(getCase(x,y));
-			}
-		}
-		return posContent;
-	}
-
 //	public int[] getCaseContent(Content content){
 //
 //		int tabContentX[] = new int[0];

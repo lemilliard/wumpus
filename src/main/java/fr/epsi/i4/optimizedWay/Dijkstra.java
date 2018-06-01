@@ -16,7 +16,6 @@ public class Dijkstra {
     private ArrayList<Edge> edges = new ArrayList();
     private int idGold;
     private int idWumpus;
-    private ArrayList<Integer> listIdPit = new ArrayList<>();
 
     public Dijkstra(Board board) {
         this.boardWidth = board.getWidth();
@@ -55,6 +54,6 @@ public class Dijkstra {
         }
         Graph g = new Graph(edges);
         g.calculateShortestDistances();
-        g.printResult(idGold);
+        g.printResult(idGold, tabContent);
     }
 }

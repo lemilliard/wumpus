@@ -1,13 +1,17 @@
 package fr.epsi.i4.optimizedWay;
 
+import fr.epsi.i4.back.model.board.Case;
+import fr.epsi.i4.back.model.board.content.Content;
+
 import java.util.ArrayList;
 
 public class Graph {
 	private Node[] nodes;
 	private int noOfNodes;
-	//private Edge[] edges;
-	private ArrayList<Edge> listEdges;
 	private int noOfEdges;
+	private ArrayList<Edge> listEdges;
+	private ArrayList<Integer> listDijstra = new ArrayList<>();
+	private ArrayList<Node> listNodeDijstra = new ArrayList<>();
 
 	public Graph(ArrayList<Edge> listEdges) {
 		this.listEdges = listEdges;
@@ -37,13 +41,13 @@ public class Graph {
 	}
 	// next video to implement the Dijkstra algorithm !!!
 	public void calculateShortestDistances() {
-		// node 0 as source
+		// node 8 as source
 		this.nodes[8].setDistanceFromSource(0);
 		int nextNode = 8;
 		// visit every node
 		for (int i = 8; i < this.nodes.length; i++) {
 			// loop around the edges of current node
-			ArrayList<Edge> currentNodeEdges = this.nodes[nextNode].getEdges();
+			ArrayList<Edge> currentNodeEdges = this.nodes[nextNode].getEdges(); //Récupère toutes les liaisons (edges) pour chaque noeud
 			for (int joinedEdge = 0; joinedEdge < currentNodeEdges.size(); joinedEdge++) {
 				int neighbourIndex = currentNodeEdges.get(joinedEdge).getNeighbourIndex(nextNode);
 				// only if not visited
@@ -51,6 +55,7 @@ public class Graph {
 					int tentative = this.nodes[nextNode].getDistanceFromSource() + currentNodeEdges.get(joinedEdge).getLength();
 					if (tentative < nodes[neighbourIndex].getDistanceFromSource()) {
 						nodes[neighbourIndex].setDistanceFromSource(tentative);
+						this.listNodeDijstra.add(nodes[neighbourIndex]);
 					}
 				}
 			}
@@ -74,7 +79,7 @@ public class Graph {
 		return storedNodeIndex;
 	}
 	// display result
-	public void printResult(int idGold) {
+	public void printResult(int idGold, Case[][] tabContent) {
 		String output = "Number of nodes = " + this.noOfNodes;
 		output += "\nNumber of edges = " + this.noOfEdges;
 		for (int i = 8; i < this.nodes.length; i++) {
@@ -90,6 +95,26 @@ public class Graph {
 		}
 		System.out.println(outputGold);
 		System.out.println("");
+		cheminDijstra(idGold, tabContent);
+	}
+
+	public void cheminDijstra(int idGold, Case[][] tabContent) {
+		for (int i = 8; i < this.nodes.length; i++) {
+			if (i == idGold) {
+				int nbCases = (nodes[i].getDistanceFromSource() + 1) / 100;
+				for (int x = 1; x < tabContent.length - 1; x++) {
+					for (int y = 2; y < tabContent.length - 1; y++) {
+						Case cases = tabContent[x][y];
+						int id = cases.getId();
+						for (int j = 0; j < listDijstra.size(); j++) {
+							if (j < nbCases && id == listDijstra.get(j)) {
+								cases.addContent(Content.DIJKSTRA);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	public Node[] getNodes() {
 		return nodes;

@@ -7,7 +7,7 @@ import java.util.Set;
  * Created by tkint on 17/12/2017.
  */
 public enum Content {
-	WALL(true), AGENT(true), GOLD(true), PIT(true), WUMPUS(true), BREEZE(false), STENCH(false);
+	WALL(true), AGENT(true), GOLD(true), PIT(true), WUMPUS(true), BREEZE(false), STENCH(false), DIJKSTRA(false);
 
     private boolean solid;
 
