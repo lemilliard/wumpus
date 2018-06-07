@@ -5,6 +5,7 @@ import fr.epsi.i4.back.model.board.content.Content;
 import fr.epsi.i4.back.model.board.content.Gold;
 import fr.epsi.i4.back.model.board.content.Weight;
 import fr.epsi.i4.optimizedWay.Dijkstra;
+import fr.epsi.i4.optimizedWay.NewGraph;
 import fr.epsi.i4.util.Randomizer;
 
 import java.util.ArrayList;
@@ -134,6 +135,8 @@ public class Board {
 		// Ajout du Wumpus
 		addCaseContent(Content.WUMPUS, Content.STENCH);
 		Dijkstra dijkstra = new Dijkstra(this);
+		//NewGraph newGraph = new NewGraph(this);
+
 		Case.nextId = 0;
 	}
 

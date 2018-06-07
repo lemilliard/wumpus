@@ -15,6 +15,8 @@ public class Dijkstra {
     private Case[][] tabContent;
     private ArrayList<Edge> edges = new ArrayList();
     private int idGold;
+    private int xGold;
+    private int yGold;
     private int idWumpus;
 
     public Dijkstra(Board board) {
@@ -45,6 +47,8 @@ public class Dijkstra {
                     } else if (value.containsContent(Content.GOLD) && idGold != value.getId()) {
                         edges.add(new Edge(id, value.getId(), -1));
                         System.out.println("GOLD : " + value.getId());
+                        xGold = value.getX();
+                        yGold = value.getY();
                         idGold = value.getId();
                     } else {
                         edges.add(new Edge(id, value.getId(), 100));
@@ -54,6 +58,6 @@ public class Dijkstra {
         }
         Graph g = new Graph(edges);
         g.calculateShortestDistances();
-        g.printResult(idGold, tabContent);
+        g.printResult(idGold, board, xGold, yGold, tabContent);
     }
 }
