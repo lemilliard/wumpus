@@ -6,7 +6,6 @@ import fr.epsi.i4.back.model.board.content.Content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Graph {
 	private Node[] nodes;
@@ -110,10 +109,14 @@ public class Graph {
 			key = listAntecedent.get(key);
 			for (int i = 1; i < tabContent.length - 1; i++) {
 				for (int j = 1; j < tabContent.length - 1; j++) {
-					Case cases = tabContent[i][j];
+					Case cases = tabContent[j][i];
 					if (key == cases.getId()) {
-						board.getCase(i, j).addContent(Content.DIJKSTRA);
-						if (key != 8) { // Case de départ
+						if (!cases.containsContent(Content.PIT)) {
+							board.getCase(i, j).addContent(Content.DIJKSTRA);
+							if (key != 8) { // Case de départ
+								path = true;
+							}
+						}else {
 							path = true;
 						}
 					}

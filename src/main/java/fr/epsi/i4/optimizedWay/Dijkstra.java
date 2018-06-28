@@ -18,6 +18,7 @@ public class Dijkstra {
     private int xGold;
     private int yGold;
     private int idWumpus;
+    private boolean[][][][] proxi;
 
     public Dijkstra(Board board) {
         this.boardWidth = board.getWidth();
@@ -25,6 +26,7 @@ public class Dijkstra {
         this.tabContent = board.getCases();
         this.idGold = 0;
         this.idWumpus = 0;
+        this.proxi = new boolean[25][25][25][25];
 
         System.out.println(boardHeight + " - " + boardWidth);
         System.out.println(tabContent.length);
@@ -39,25 +41,39 @@ public class Dijkstra {
                     if (value.containsContent(Content.PIT)) {
                         edges.add(new Edge(id, value.getId(), 1000));
                         System.out.println("PIT : " + value.getId());
+                        proxi[value.getX()][value.getY()][value.getX()][value.getY()] = false;
                     } else if (value.containsContent(Content.WUMPUS) && idWumpus != value.getId()) {
-                        edges.add(new Edge(id, value.getId(), 101));
+                        edges.add(new Edge(id, value.getId(), 11));
                         System.out.println("WUMPUS : " + value.getId());
                         idWumpus = value.getId();
+                        proxi[value.getX()][value.getY()][value.getX()][value.getY()] = true;
                     } else if (value.containsContent(Content.WALL)) {
+                        proxi[value.getX()][value.getY()][value.getX()][value.getY()] = false;
                     } else if (value.containsContent(Content.GOLD) && idGold != value.getId()) {
                         edges.add(new Edge(id, value.getId(), -1));
                         System.out.println("GOLD : " + value.getId());
                         xGold = value.getX();
                         yGold = value.getY();
                         idGold = value.getId();
+                        proxi[value.getX()][value.getY()][value.getX()][value.getY()] = true;
                     } else {
-                        edges.add(new Edge(id, value.getId(), 100));
+                        edges.add(new Edge(id, value.getId(), 10));
+                        proxi[value.getX()][value.getY()][value.getX()][value.getY()] = true;
                     }
                 }
             }
         }
-        Graph g = new Graph(edges);
-        g.calculateShortestDistances();
-        g.printResult(idGold, board, xGold, yGold, tabContent);
+//        Graph g = new Graph(edges);
+//        g.calculateShortestDistances();
+//        g.printResult(idGold, board, xGold, yGold, tabContent);
+
+        ShortestPath shortestPath = new ShortestPath(boardHeight - 2, boardWidth - 2,1, 1, xGold, yGold, proxi);
+        shortestPath.djikstra();
+        shortestPath.path();
+        for (int i = 0; i < shortestPath.path.size() - 1; i++) {
+            for (int j = 0; j < shortestPath.path.size() - 1; j++) {
+                board.getCase(i, j).addContent(Content.DIJKSTRA);
+            }
+        }
     }
 }
