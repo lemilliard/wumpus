@@ -9,7 +9,8 @@ public enum FrontContent {
 	PIT("pit.png"), //
 	WUMPUS("wumpus.png"), //
 	BREEZE("breeze.png"), //
-	STENCH("mouche.png");
+	STENCH("mouche.png"),
+	DIJKSTRA("dijkstra.png");
 
 	private static final String filePath = "./img/";
 

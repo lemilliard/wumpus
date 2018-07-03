@@ -104,11 +104,11 @@ public class Game extends JFrame implements KeyListener {
 		setVisible(true);
 		if (mode.equals(Mode.AUTO)) {
 			while (win + death < maxGames) {
-//                try {
-//                    Thread.sleep(500);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 				if (rounds > 200) {
 					death++;
 					System.out.println("L'agent est décédé...");
@@ -235,7 +235,7 @@ public class Game extends JFrame implements KeyListener {
 	}
 
 	public void refresh() {
-		//getGame().refresh();
+		getGame().refresh();
 	}
 
 	private int processDirection(Direction treeResult) {

@@ -2,9 +2,13 @@ package fr.epsi.i4.back.model.board;
 
 import fr.epsi.i4.back.model.Agent;
 import fr.epsi.i4.back.model.board.content.Content;
+import fr.epsi.i4.back.model.board.content.Gold;
 import fr.epsi.i4.back.model.board.content.Weight;
+import fr.epsi.i4.optimizedWay.Dijkstra;
+import fr.epsi.i4.optimizedWay.NewGraph;
 import fr.epsi.i4.util.Randomizer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -23,6 +27,8 @@ public class Board {
 	private Agent agent;
 
 	private Randomizer randomizer;
+
+	private Gold gold;
 
 	public Board(int width, int height, int pitsPercentage) {
 		this.width = width + 2;
@@ -49,8 +55,11 @@ public class Board {
 		return agent;
 	}
 
-	@Override
-	public String toString() {
+	public Gold getGold(){
+	    return gold;
+    }
+
+	@Override public String toString() {
 		String str = "";
 
 		for (int y = cases.length - 1; y > -1; y--) {
@@ -125,6 +134,10 @@ public class Board {
 		}
 		// Ajout du Wumpus
 		addCaseContent(Content.WUMPUS, Content.STENCH);
+		Dijkstra dijkstra = new Dijkstra(this);
+		//NewGraph newGraph = new NewGraph(this);
+
+		Case.nextId = 0;
 	}
 
 	public void regenerate() {
@@ -137,6 +150,29 @@ public class Board {
 	public void addCaseContent(Content content, int x, int y) {
 		getCase(x, y).addContent(content);
 	}
+
+//	public int[] getCaseContent(Content content){
+//
+//		int tabContentX[] = new int[0];
+//		int tabContentY[] = new int[0];
+//		int a = 0;
+//		int tabFinal[];
+//
+//		for (int y = cases.length - 1; y > -1; y--) {
+//			for (int x = cases.length - 1; x < cases[y].length; x++) {
+//				if (doesCaseContainsContent(x, y, content)) {
+//					tabContentX[a] += x;
+//					tabContentY[a] += y;
+//					a++;
+//				}
+//			}
+//		}
+//		tabFinal = new int[tabContentX.length + tabContentY.length];
+//		System.arraycopy(tabContentX, 0, tabFinal, 0, tabContentX.length);
+//		System.arraycopy(tabContentY, 0, tabFinal, tabContentX.length, tabContentY.length);
+//
+//		return tabFinal;
+//	}
 
 	private void addCaseContentAround(int x, int y, Content content) {
 		if (x > 0 && getCase(x - 1, y).canContain(content)) {
