@@ -31,9 +31,7 @@ public class Game extends JFrame implements KeyListener {
 
 	private final int exploration;
 
-	private final int balls;
-
-	private final int gonzesse;
+	private final int gentleman;
 
 	private int rounds = 0;
 
@@ -47,15 +45,25 @@ public class Game extends JFrame implements KeyListener {
 
 	private int maxGames;
 
-	public Game(Board board, Mode mode, int balls, int maxGames) {
+	private boolean display;
+
+	private boolean printArbre;
+
+	private double anteBalls;
+
+	public Game(Board board, Mode mode, int gentleman, int balls, int maxGames, boolean display, boolean printArbre) {
 		this.board = board;
 		this.mode = mode;
 		this.exploration = 10;
-		this.balls = balls / 10;
-		this.gonzesse = (10 - this.balls);
+		this.gentleman = gentleman / 10;
+		this.anteBalls = (100 - balls) / 10;
 		this.maxGames = maxGames;
 		this.pathFinder = new PathFinder(board);
-		initWindow();
+		this.display = display;
+		this.printArbre = printArbre;
+		if (this.display) {
+			initWindow();
+		}
 		initDecisionTree();
 	}
 
@@ -100,22 +108,24 @@ public class Game extends JFrame implements KeyListener {
 	}
 
 	public void play() {
-		refresh();
+		init();
 		setVisible(true);
 		if (mode.equals(Mode.AUTO)) {
 			while (win + death < maxGames) {
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-				if (rounds > 200) {
-					death++;
-					System.out.println("L'agent est décédé...");
-					reset();
-				} else {
-					playRound();
+				if (this.display) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+//						e.printStackTrace();
+					}
 				}
+//				if (rounds > 200) {
+//					death++;
+//					System.out.println("L'agent est décédé...");
+//					reset();
+//				} else {
+					playRound();
+//				}
 			}
 			System.exit(0);
 		}
@@ -128,7 +138,14 @@ public class Game extends JFrame implements KeyListener {
 		System.out.println("------------------------");
 		rounds = 0;
 		board.regenerate();
-		refresh();
+		init();
+		if (this.display) {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+//						e.printStackTrace();
+			}
+		}
 	}
 
 	private void playRound() {
@@ -146,7 +163,7 @@ public class Game extends JFrame implements KeyListener {
 			try {
 				rounds += processDirection(board.getDirectionByCase(pathFinded.antePop()));
 			} catch (NullPointerException e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 				System.out.println(pathFinded.toString());
 				System.out.println(pathFindedCloned.toString());
 			}
@@ -184,16 +201,17 @@ public class Game extends JFrame implements KeyListener {
 		Result result;
 		List<PossibleChoice> possibleChoices = new ArrayList<>();
 		int i = 0;
+		double ratio;
 		while (i < directionsPossibles.size()) {
 			entry.put(DIRECTION, directionsPossibles.get(i).name());
 			result = decisionTree.decide(entry);
 			// Gestion du ratio
 			if (result != null) {
-				double ratio = result.getRatio();
+				ratio = result.getRatio();
 				verifierSafe(possibleChoices, result, directionsPossibles.get(i));
 				if (result.getValue().equals("Vivant")) {
 					//Si la case à deja ete visité on l'ajoute une seule fois sinon on ajoute la possibilité normalement
-					if (!explore(possibleChoices, result, directionsPossibles.get(i)) && ratio > 0.9d) {
+					if (!explore(possibleChoices, result, directionsPossibles.get(i)) && ratio > anteBalls) {
 						for (int j = 0; j < (int) (ratio * 10); j++) {
 							possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
 						}
@@ -235,7 +253,15 @@ public class Game extends JFrame implements KeyListener {
 	}
 
 	public void refresh() {
-		getGame().refresh();
+		if (this.display) {
+			getGame().refresh();
+		}
+	}
+
+	public void init() {
+		if (this.display) {
+			getGame().init();
+		}
 	}
 
 	private int processDirection(Direction treeResult) {
@@ -291,7 +317,7 @@ public class Game extends JFrame implements KeyListener {
 		switch (direction) {
 			case UP:
 				if (board.getCase(x, y + 1).getWeight().equals(Weight.VISITED)) {
-					for (int j = 0; j < balls; j++) {
+					for (int j = 0; j < gentleman; j++) {
 						possibleChoices.add(new PossibleChoice(result, direction));
 					}
 					toExplore = true;
@@ -299,7 +325,7 @@ public class Game extends JFrame implements KeyListener {
 				break;
 			case DOWN:
 				if (board.getCase(x, y - 1).getWeight().equals(Weight.VISITED)) {
-					for (int j = 0; j < balls; j++) {
+					for (int j = 0; j < gentleman; j++) {
 						possibleChoices.add(new PossibleChoice(result, direction));
 					}
 					toExplore = true;
@@ -307,7 +333,7 @@ public class Game extends JFrame implements KeyListener {
 				break;
 			case LEFT:
 				if (board.getCase(x - 1, y).getWeight().equals(Weight.VISITED)) {
-					for (int j = 0; j < balls; j++) {
+					for (int j = 0; j < gentleman; j++) {
 						possibleChoices.add(new PossibleChoice(result, direction));
 					}
 					toExplore = true;
@@ -315,7 +341,7 @@ public class Game extends JFrame implements KeyListener {
 				break;
 			case RIGHT:
 				if (board.getCase(x + 1, y).getWeight().equals(Weight.VISITED)) {
-					for (int j = 0; j < balls; j++) {
+					for (int j = 0; j < gentleman; j++) {
 						possibleChoices.add(new PossibleChoice(result, direction));
 					}
 					toExplore = true;
@@ -380,7 +406,7 @@ public class Game extends JFrame implements KeyListener {
 
 	private void updateGameState(HashMap<String, String> entry) {
 		// Vérifie l'état du jeu
-		System.out.println("Tour " + rounds);
+//		System.out.println("Tour " + rounds);
 
 		int result;
 		if (board.getAgent().isAlive()) {
@@ -389,7 +415,9 @@ public class Game extends JFrame implements KeyListener {
 			result = 1;
 		}
 		decisionTree.addData(entry, result);
-//		decisionTree.print();
+		if (printArbre) {
+			decisionTree.print();
+		}
 		decisionTree.save();
 
 		if (!board.getAgent().isAlive()) {

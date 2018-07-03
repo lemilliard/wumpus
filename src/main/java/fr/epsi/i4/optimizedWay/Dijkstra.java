@@ -26,10 +26,11 @@ public class Dijkstra {
         this.tabContent = board.getCases();
         this.idGold = 0;
         this.idWumpus = 0;
-        this.proxi = new boolean[25][25][25][25];
+        int size = boardWidth * boardHeight;
+        this.proxi = new boolean[size][size][size][size];
 
-        System.out.println(boardHeight + " - " + boardWidth);
-        System.out.println(tabContent.length);
+//        System.out.println(boardHeight + " - " + boardWidth);
+//        System.out.println(tabContent.length);
 
         for (int i = 1; i < tabContent.length - 1; i++) {
             for (int j = 1; j < tabContent.length - 1; j++) {
@@ -40,18 +41,18 @@ public class Dijkstra {
                     Case value = aroundEntry.getValue();
                     if (value.containsContent(Content.PIT)) {
                         edges.add(new Edge(id, value.getId(), 1000));
-                        System.out.println("PIT : " + value.getId());
+//                        System.out.println("PIT : " + value.getId());
                         proxi[value.getX()][value.getY()][value.getX()][value.getY()] = false;
                     } else if (value.containsContent(Content.WUMPUS) && idWumpus != value.getId()) {
                         edges.add(new Edge(id, value.getId(), 11));
-                        System.out.println("WUMPUS : " + value.getId());
+//                        System.out.println("WUMPUS : " + value.getId());
                         idWumpus = value.getId();
                         proxi[value.getX()][value.getY()][value.getX()][value.getY()] = true;
                     } else if (value.containsContent(Content.WALL)) {
                         proxi[value.getX()][value.getY()][value.getX()][value.getY()] = false;
                     } else if (value.containsContent(Content.GOLD) && idGold != value.getId()) {
                         edges.add(new Edge(id, value.getId(), -1));
-                        System.out.println("GOLD : " + value.getId());
+//                        System.out.println("GOLD : " + value.getId());
                         xGold = value.getX();
                         yGold = value.getY();
                         idGold = value.getId();
@@ -65,7 +66,8 @@ public class Dijkstra {
         }
         Graph g = new Graph(edges);
         g.calculateShortestDistances();
-        g.printResult(idGold, board, xGold, yGold, tabContent);
+        g.cheminDijkstra(board, idGold, xGold, yGold, tabContent);
+//        g.printResult(idGold, board, xGold, yGold, tabContent);
 
 //        ShortestPath shortestPath = new ShortestPath(boardHeight - 2, boardWidth - 2,1, 1, xGold, yGold, proxi);
 //        shortestPath.djikstra();

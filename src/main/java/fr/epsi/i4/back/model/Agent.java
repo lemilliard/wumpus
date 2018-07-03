@@ -27,6 +27,8 @@ public class Agent {
 
 	private int backCounter;
 
+	private Case casePrecedente;
+
 	public Agent(Board board) {
 		this.board = board;
 		this.x = 1;
@@ -66,14 +68,14 @@ public class Agent {
 		int toursUtilises = 1;
 		if (!direction.equals(this.direction)) {
 			toursUtilises++;
-			System.out.println("L'agent se tourne");
+//			System.out.println("L'agent se tourne");
 		}
 		if (direction.getOpposite().equals(this.direction)) {
 			toursUtilises++;
-			System.out.println("L'agent se tourne encore");
+//			System.out.println("L'agent se tourne encore");
 		}
 		this.direction = direction;
-		System.out.println("L'agent va vers " + direction);
+//		System.out.println("L'agent va vers " + direction);
 		switch (direction) {
 			case UP:
 				move(x, y + 1);
@@ -98,6 +100,8 @@ public class Agent {
 
 	private void move(int x, int y) {
 		if (x >= 1 && x < board.getWidth() - 1 && y >= 1 && y < board.getHeight() - 1) {
+			this.casePrecedente = board.getCase(this.x, this.y);
+
 			board.getCase(this.x, this.y).removeContent(Content.AGENT);
 			board.getCase(x, y).addContent(Content.AGENT);
 			board.getCase(this.x, this.y).setWeight(VISITED);
@@ -303,5 +307,9 @@ public class Agent {
 
 	public Case getCase() {
 		return board.getCase(x, y);
+	}
+
+	public Case getCasePrecedente() {
+		return casePrecedente;
 	}
 }

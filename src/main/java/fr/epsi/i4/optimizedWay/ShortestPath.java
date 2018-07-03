@@ -52,12 +52,12 @@ public class ShortestPath {
     }
 
     public void djikstra() {
-        System.out.println("DJIKSTRA");
+//        System.out.println("DJIKSTRA");
         int[] mem = new int[2];
         mem[0] = colStart;
         mem[1] = rowStart;
         nodeList.remove(mem);
-        System.out.println(proxi[mem[0]][mem[1]][mem[0] - 1][mem[1]]);
+//        System.out.println(proxi[mem[0]][mem[1]][mem[0] - 1][mem[1]]);
         while (djikstra[colEnd][rowEnd] == 10000 && !end) {
             mem = findMin();
             nodeList.remove(mem);
@@ -216,6 +216,6 @@ public class ShortestPath {
                 }
             }
         }
-        System.out.println("ok setProxi");
+//        System.out.println("ok setProxi");
     }
 }

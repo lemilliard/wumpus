@@ -97,7 +97,6 @@ public class Graph {
 		System.out.println(outputGold);
 		System.out.println("");
 		//cheminDijstra(idGold, tabContent);
-		cheminDijkstra(board, idGold, xGold, yGold, tabContent);
 	}
 
 	public void cheminDijkstra(Board board, int idGold, int xGold, int yGold, Case[][] tabContent) {

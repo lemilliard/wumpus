@@ -30,13 +30,16 @@ public class Board {
 
 	private Gold gold;
 
-	public Board(int width, int height, int pitsPercentage) {
+	private boolean dijkstra;
+
+	public Board(int width, int height, int pitsPercentage, boolean dijkstra) {
 		this.width = width + 2;
 		this.height = height + 2;
 		this.pitsPercentage = pitsPercentage;
 		this.agent = new Agent(this);
 		generate();
 		this.agent.updateWeights();
+		this.dijkstra = dijkstra;
 	}
 
 	public int getWidth() {
@@ -134,7 +137,9 @@ public class Board {
 		}
 		// Ajout du Wumpus
 		addCaseContent(Content.WUMPUS, Content.STENCH);
-		Dijkstra dijkstra = new Dijkstra(this);
+		if (this.dijkstra) {
+			Dijkstra dijkstra = new Dijkstra(this);
+		}
 		//NewGraph newGraph = new NewGraph(this);
 
 		Case.nextId = 0;
