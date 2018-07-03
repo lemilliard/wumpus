@@ -5,8 +5,8 @@ public class Duo {
     private int[] second;
 
     public Duo(int[] first, int[] second) {
-        this.setFirst(first);
-        this.setSecond(second);
+        this.first = first;
+        this.second = second;
     }
 
     public int[] getFirst() {
