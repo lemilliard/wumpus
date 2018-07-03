@@ -63,17 +63,17 @@ public class Dijkstra {
                 }
             }
         }
-//        Graph g = new Graph(edges);
-//        g.calculateShortestDistances();
-//        g.printResult(idGold, board, xGold, yGold, tabContent);
+        Graph g = new Graph(edges);
+        g.calculateShortestDistances();
+        g.printResult(idGold, board, xGold, yGold, tabContent);
 
-        ShortestPath shortestPath = new ShortestPath(boardHeight - 2, boardWidth - 2,1, 1, xGold, yGold, proxi);
-        shortestPath.djikstra();
-        shortestPath.path();
-        for (int i = 0; i < shortestPath.path.size() - 1; i++) {
-            for (int j = 0; j < shortestPath.path.size() - 1; j++) {
-                board.getCase(i, j).addContent(Content.DIJKSTRA);
-            }
-        }
+//        ShortestPath shortestPath = new ShortestPath(boardHeight - 2, boardWidth - 2,1, 1, xGold, yGold, proxi);
+//        shortestPath.djikstra();
+//        shortestPath.path();
+//        for (int i = 0; i < shortestPath.path.size() - 1; i++) {
+//            for (int j = 0; j < shortestPath.path.size() - 1; j++) {
+//                board.getCase(i, j).addContent(Content.DIJKSTRA);
+//            }
+//        }
     }
 }
