@@ -193,15 +193,15 @@ public class Game extends JFrame implements KeyListener {
 				verifierSafe(possibleChoices, result, directionsPossibles.get(i));
 				if (result.getValue().equals("Vivant")) {
 					//Si la case à deja ete visité on l'ajoute une seule fois sinon on ajoute la possibilité normalement
-					if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
+					if (!explore(possibleChoices, result, directionsPossibles.get(i)) && ratio > 0.9d) {
 						for (int j = 0; j < (int) (ratio * 10); j++) {
 							possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
 						}
 					}
-				} else {
-					for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
-						possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-					}
+//				} else {
+//					for (int j = 0; j < (int) ((1 - ratio) * 10); j++) {
+//						possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+//					}
 				}
 			} else {
 				possibleChoices.removeAll(possibleChoices);
