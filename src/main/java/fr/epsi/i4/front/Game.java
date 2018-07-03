@@ -34,9 +34,7 @@ public class Game extends JFrame implements KeyListener {
     private final int exploration;
 
     private final int balls;
-
-    private final int gentleman;
-
+    
     private int rounds = 0;
 
     private int win = 0;
@@ -44,13 +42,14 @@ public class Game extends JFrame implements KeyListener {
     private int death = 0;
 
     private PathFinder pathFinder;
+    
+    private DecisionTree decisionTree;
 
-    public Game(Board board, Mode mode, int balls, int gonzesse) {
+    public Game(Board board, Mode mode, int balls) {
         this.board = board;
         this.mode = mode;
-        this.exploration = 5;
+        this.exploration = 10;
         this.balls = balls / 10;
-        this.gentleman = gonzesse / 10;
         this.pathFinder = new PathFinder(board);
         initWindow();
         initDecisionTree();
@@ -86,7 +85,7 @@ public class Game extends JFrame implements KeyListener {
         config.addDecision("Vivant");
         config.addDecision("Mort");
 
-        DecisionTree.init(config);
+        decisionTree = new DecisionTree(config);
     }
 
     public FrontGame getGame() {
@@ -98,7 +97,7 @@ public class Game extends JFrame implements KeyListener {
         setVisible(true);
         if (mode.equals(Mode.AUTO)) {
 //            while (true) {
-            while (death + win < 500) {
+            while (death + win < 5000) {
 //                try {
 //                    Thread.sleep(500);
 //                } catch (InterruptedException e) {
@@ -173,56 +172,58 @@ public class Game extends JFrame implements KeyListener {
         // Utiliser l'arbre de décision
         Result result;
         List<PossibleChoice> possibleChoices = new ArrayList<>();
-        PossibleChoice decisionArbre = null;
+        List<PossibleChoice> visited = new ArrayList<>();
+        List<PossibleChoice> decisionArbre = new ArrayList<>();
         int i = 0;
         double ratioMax = 0;
         while (i < directionsPossibles.size()) {
             entry.put(CASE, casesAround.get(directionsPossibles.get(i)).getWeight().name());
 
-            result = DecisionTree.decide(entry);
+            result = decisionTree.decide(entry);
             // Gestion du ratio
 
             verifierSafe(possibleChoices, result, directionsPossibles.get(i));
-            if (!explore(possibleChoices, result, directionsPossibles.get(i))) {
-
-                if (result != null) {
-                    double ratio = result.getRatio();
-                    if (result.getValue().equals("Vivant")) {
-                        //Si la case à deja ete visité on l'ajoute une seule fois sinon on ajoute la possibilité normalement
-                        if (ratioMax < ratio) {
-                            ratioMax = ratio;
-                            decisionArbre = new PossibleChoice(result, directionsPossibles.get(i));
-                        }
-                    } else {
-                        if (ratioMax < 1 - ratio) {
-                            ratioMax = 1 - ratio;
-                            decisionArbre = new PossibleChoice(result, directionsPossibles.get(i));
-                        }
-                    }
-                } else {
-                    System.out.println("C'EST NULL !!!");
-                    possibleChoices.removeAll(possibleChoices);
-                    possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
-                    i = directionsPossibles.size();
-                }
-            }
             
+            if (result != null) {
+                double ratio = result.getRatio();
+                if (result.getValue().equals("Vivant")) {
+                    if(board.getAgent().getCasesAround().get(directionsPossibles.get(i)).getWeight().equals(Weight.VISITED)){
+                        visited.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                    }
+                    //Si la case à deja ete visité on l'ajoute une seule fois sinon on ajoute la possibilité normalement
+                    else if (ratioMax < ratio && ratio > 0.85d) {
+                        ratioMax = ratio;
+                        decisionArbre.clear();
+                        decisionArbre.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                    } else if (ratio == ratioMax){
+                        decisionArbre.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                    }
+                }
+            } else {
+                System.out.println("C'EST NULL !!!");
+                possibleChoices.removeAll(possibleChoices);
+                possibleChoices.add(new PossibleChoice(result, directionsPossibles.get(i)));
+                i = directionsPossibles.size();
+            }            
             i++;
         }
 
         if (decisionArbre != null) {
-            System.out.println(decisionArbre.getResult().getRatio());
-            possibleChoices.add(decisionArbre);
+            possibleChoices.addAll(decisionArbre);
         }
 
         // Process result
         Direction choice;
         Randomizer randomizer;
-        if (possibleChoices.isEmpty()) {
+        if (possibleChoices.isEmpty() && visited.isEmpty()) {
             System.out.println("Random !!!!");
             randomizer = new Randomizer(0, directionsPossibles.size() - 1);
             choice = directionsPossibles.get(randomizer.randomize());
         } else {
+            if(possibleChoices.isEmpty()){
+                System.out.println("possibleChoice empty");
+                possibleChoices.addAll(visited);
+            }
             randomizer = new Randomizer(0, possibleChoices.size() - 1);
             choice = possibleChoices.get(randomizer.randomize()).getChoice();
         }
@@ -397,9 +398,9 @@ public class Game extends JFrame implements KeyListener {
             result = 1;
         }
 //        System.out.println(entry.toString());
-        DecisionTree.addData(entry, result);
+        decisionTree.addData(entry, result);
 //		DecisionTree.print();
-        DecisionTree.save();
+        decisionTree.save();
 
         if (!board.getAgent().isAlive()) {
             death++;
